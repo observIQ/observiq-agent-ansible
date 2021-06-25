@@ -1,0 +1,33 @@
+---
+- name: Validate Operating Systen
+  assert:
+    that: >
+      ansible_os_family == 'Windows' or ansible_distribution in ['Debian', 'Ubuntu', 'RedHat', 'CentOS', 'Amazon', 'SLES', 'openSUSE', 'SuSE', 'SLES_SAP',
+      'Windows']
+    msg: >
+      Received invalid Operating System: '{{ ansible_distribution }}'. The observIQ agent Ansible role supports the following OSs: 'Debian', 'Ubuntu', 'RedHat',
+      'CentOS', 'Amazon', 'SLES', 'openSUSE', 'SuSE', 'SLES_SAP' and 'Windows'.
+
+- name: Validate agent_type
+  assert:
+    that: agent_type in ['observiq-agent']
+    msg: "Received invalid agent type: '{{ agent_type }}'. The observIQ agent Ansible role supports the following agents: 'observiq-agent'."
+
+- name: Validate version
+  assert:
+    that: version is defined
+    msg: "Missing variable, 'version' is a required variable."
+
+- name: Validate secret_key
+  assert:
+    that: secret_key is defined
+    msg: "Missing variable, 'secret_key' is a required variable."
+
+- name: Validate package_state
+  assert:
+    that: package_state in ['present', 'absent']
+    msg: "Received invalid package state: '{{ package_state }}'. The observIQ agent Ansible role supports the following package states: 'present' and 'absent'."
+
+- name: Call Linux specific playbook
+  include_tasks: linux.yml
+  when: ansible_os_family in ['Debian', 'RedHat', 'Suse']

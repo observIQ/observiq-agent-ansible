@@ -1,0 +1,4 @@
+---
+observiq-agent_service_name: observiq-agent.service
+observiq-agent_validation_cmd: ''
+

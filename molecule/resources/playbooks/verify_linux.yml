@@ -1,0 +1,38 @@
+---
+- name: Include vars
+  include_vars:
+    file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/vars/main.yml"
+
+- name: Ensure the agent is present
+  stat:
+    path: /opt/observiq-agent/launcher/bpagent-launcher-linux-amd64
+  register: result
+
+- name: Assert the agent was already present
+  assert:
+    that: result.changed == false
+
+- name: Ensure the agent is running
+  service:
+    name: "{{ service_name }}.service"
+    state: started
+  register: result
+
+- name: Assert the agent was already running
+  assert:
+    that: result.changed == false
+
+- name: Uninstall agent
+  include_role:
+    name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+  vars:
+    package_state: absent
+
+- name: Ensure the agent is absent
+  stat:
+    path: /opt/observiq-agent/launcher/bpagent-launcher-linux-amd64
+  register: result
+
+- name: Assert the agent was already absent
+  assert:
+    that: result.changed == false

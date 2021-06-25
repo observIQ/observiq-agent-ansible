@@ -1,0 +1,46 @@
+---
+- name: Create temp directory
+  tempfile:
+    path: /tmp
+    state: directory
+    suffix: _observiq_shell_scripts
+  register: tempfolder
+  check_mode: false
+  changed_when: false
+
+- name: Download script
+  get_url:
+    # TODO: Support non amd64 arch instead of hardcoding 'linux-amd64'
+    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/linux-amd64/installer/observiq-agent-installer.sh"
+    dest: "{{ tempfolder.path }}/observiq-agent-installer.sh"
+    mode: 0755
+  check_mode: false
+  changed_when: false
+
+- name: Install agent or uninstall agent
+  command:
+    chdir: "{{ tempfolder.path }}"
+    cmd: >
+      ./observiq-agent-installer.sh  {{ '--uninstall' if package_state == 'absent' }}
+        --accept-defaults
+        --install-dir {{ install_dir }}
+        --service-user {{ service_user }}
+        --service-name {{ service_name }}
+  environment:
+    SECRET_KEY: "{{ secret_key }}"
+    OBSERVIQ_ENDPOINT: "{{ websocket_connection_endpoint }}"
+  become: yes
+  register: result
+  retries: 2
+  delay: 3
+  until: result.rc == 0
+  check_mode: false
+  changed_when: "'Installation Complete!' in result.stdout_lines"
+  notify: "restart {{ agent_type }} agent"
+
+- name: Remove temp directory
+  file:
+    path: "{{ tempfolder.path }}"
+    state: absent
+  check_mode: false
+  changed_when: false

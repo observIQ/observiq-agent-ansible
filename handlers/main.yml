@@ -1,0 +1,10 @@
+---
+- name: "restart {{ agent_type }} agent"
+  service:
+    name: "{{ service_name }}.service"
+    state: restarted
+  when: package_state == 'present' and not ansible_check_mode
+
+- name: "restart windows {{ agent_type }} agent"
+  win_shell: "Restart-Service -Name {{ service_name }} -Force"
+  when: package_state == 'present' and not ansible_check_mode

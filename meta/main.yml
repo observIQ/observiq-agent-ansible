@@ -1,0 +1,43 @@
+---
+galaxy_info:
+  role_name: observiq_cloud_agent
+  namespace: observiq_cloud
+  author: Joseph Siriainni
+  description: Install the observIQ Cloud Agent
+  company: observIQ
+  license: Apache-2.0
+  min_ansible_version: 2.9
+  platforms:
+    - name: Debian
+      versions:
+        - stretch
+        - buster
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+        - focal
+        - groovy
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Amazon
+      versions:
+        - AMI
+    - name: SLES
+      versions:
+        - 12
+        - 15
+    - name: Windows
+      versions:
+        - 2012
+        - 2016
+        - 2019
+  galaxy_tags:
+    - observiq
+    - stanza
+    - agent
+    - cloud
+    - opentelemetry
+dependencies: []
