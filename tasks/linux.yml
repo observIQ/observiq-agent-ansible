@@ -40,6 +40,7 @@
     src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
     dest: "{{ install_dir }}/log_agent"
     remote_src: yes
+    creates: "{{ install_dir }}/log_agent/plugins"
   notify: "restart {{ agent_type }} agent"
 
 - name: Create config/remote.yaml
