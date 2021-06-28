@@ -21,7 +21,7 @@ Role Variables
 | `service_user`                   | `root`                                | The runtime username. Root is required if your agent configuration requires listening on a privileged network port. | 
 | `service_name`                   | `observiq-agent`                      | The service name used for managing the agent. | 
 | `websocket_connection_endpoint`  | `wss://connections.app.observiq.com`  | The websocket endpoint used to connect to observIQ Cloud's management interface, this should never be changed. | 
-| `version`                        | required                              | The `version` is required to specify which version of the agent to install. | 
+| `version`                        | required                              | The `version` is required to specify which version of the agent to install. Supported versions: 1.3.11 or newer. | 
 | `secret_key`                     | required                              | The `secret_key` is required for connecting to observIQ Cloud's management and ingestion services. | 
 
 ## Example
@@ -44,7 +44,7 @@ playbook.yml
   hosts: all
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.8"
+    version: "1.3.11"
     secret_key: 00000000-0000-0000-0000-000000000000
 ```
 
