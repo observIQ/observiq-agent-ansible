@@ -74,6 +74,8 @@
   # and template_id, ansible only needs to bootstrap the file with secret_key
   # and websocket endpoint
   when:
+    # always create if missing
+    - not remote_config_yaml.stat.exists
     # required or has default, always exists
     - secret_key != remote_config.secret_key
     - websocket_connection_endpoint != remote_config.websocket_connection_endpoint
