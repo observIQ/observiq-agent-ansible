@@ -42,7 +42,7 @@
 - name: Register plugins directory
   stat:
     path: "{{ install_dir }}/log_agent/plugins"
-    register: plugin_dir
+  register: plugin_dir
 
 - name: Install plugins
   ansible.builtin.unarchive:
