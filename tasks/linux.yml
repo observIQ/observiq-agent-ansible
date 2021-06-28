@@ -47,7 +47,7 @@
   template:
     src: "remote.yaml"
     dest: "{{ install_dir }}/config/remote.yaml"
-    mode: 0644
+    mode: 0600
     # agent will re-write this file with missing fields such as agent_id
     # and template_id, ansible only needs to bootstrap the file with secret_key
     # and websocket endpoint
@@ -58,14 +58,14 @@
   template:
     src: "logging.yaml"
     dest: "{{ install_dir }}/config/logging.yaml"
-    mode: 0644
+    mode: 0600
   notify: "restart {{ agent_type }} agent"
 
 - name: Create config/os.yaml
   template:
     src: "os.yaml"
     dest: "{{ install_dir }}/config/os.yaml"
-    mode: 0644
+    mode: 0600
   notify: "restart {{ agent_type }} agent"
 
 - name: Create service file
