@@ -7,14 +7,18 @@
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: 0775
-    recurse: true
+    # when recurse is enabled, config file mode will be set to 0775
+    # which is a security risk
+    recurse: false
   loop:
     - 'config'
     - 'launcher'
     - 'log'
     - 'log_agent'
+    - 'manager'
     - 'manager/current'
-    - 'previous/current'
+    - 'manager/previous'
+    - 'manager/previous/current'
 
 - name: Install agent launcher
   get_url:
