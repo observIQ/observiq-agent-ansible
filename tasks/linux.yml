@@ -54,6 +54,20 @@
     force: no
   notify: "restart {{ agent_type }} agent"
 
+- name: Create config/logging.yaml
+  template:
+    src: "logging.yaml"
+    dest: "{{ install_dir }}/config/logging.yaml"
+    mode: 0644
+  notify: "restart {{ agent_type }} agent"
+
+- name: Create config/os.yaml
+  template:
+    src: "os.yaml"
+    dest: "{{ install_dir }}/config/os.yaml"
+    mode: 0644
+  notify: "restart {{ agent_type }} agent"
+
 - name: Create service file
   template:
     src: "observiq-agent.service"
