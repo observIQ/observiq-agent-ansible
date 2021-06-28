@@ -77,11 +77,11 @@
     # always create if missing
     - not remote_config_yaml.stat.exists or remote_config is undefined
     # required or has default, always exists
-    - remote_config is defined and secret_key != remote_config.secret_key
-    - remote_config is defined and websocket_connection_endpoint != remote_config.websocket_connection_endpoint
+    #- remote_config is defined and secret_key != remote_config.secret_key
+    #- remote_config is defined and websocket_connection_endpoint != remote_config.websocket_connection_endpoint
     # only enforce if set on the ansible side
-    - remote_config is defined and template_id != "" and template_id != remote_config.template_id
-    - remote_config is defined and agent_id != "" and agent_id != remote_config.agent_id
+    #- remote_config is defined and template_id != "" and template_id != remote_config.template_id
+    #- remote_config is defined and agent_id != "" and agent_id != remote_config.agent_id
 
 
 # Set remote.yaml perms because the template resource
