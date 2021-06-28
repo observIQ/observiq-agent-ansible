@@ -57,8 +57,8 @@
 # this file will trigger an update to remote.yaml
 - name: Create config/remote.json
   template: "remote.json"
-    src: "remote.yaml"
-    dest: "{{ install_dir }}/config/remote.yaml"
+    src: "remote.json"
+    dest: "{{ install_dir }}/config/remote.json"
     mode: 0600
   register: remote_json
 
