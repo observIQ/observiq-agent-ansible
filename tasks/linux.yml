@@ -35,7 +35,7 @@
 - name: Install agent manager
   get_url:
     url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-manager-linux-amd64"
-    dest: "{{ install_dir }}/launcher/bpagent-manager-linux-amd64"
+    dest: "{{ install_dir }}/manage/current/bpagent-manager-linux-amd64"
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: 0755
