@@ -1,11 +1,4 @@
 ---
-- name: Create temp plugins directory
-  tempfile:
-    path: /tmp
-    state: directory
-    suffix: _observiq_plugins
-  register: temp_plugins
-
 - name: Create install directory tree
   file:
     # item is the loop value
@@ -70,8 +63,3 @@
 
 - name: Start observiq-agent
   service: name={{ service_name }}.service state=started enabled=yes
-
-- name: Remove temp directory
-  file:
-    path: "{{ temp_plugins.path }}"
-    state: absent
