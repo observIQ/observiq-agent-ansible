@@ -3,3 +3,7 @@ install_dir: /opt/observiq-agent
 service_user: root
 service_name: observiq-agent
 websocket_connection_endpoint: 'wss://connections.app.observiq.com'
+
+# required variables that can be empty
+agent_id: ""
+template_id: ""
