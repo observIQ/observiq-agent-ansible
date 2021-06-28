@@ -51,8 +51,8 @@
 
 - name: Create config/remote.yaml
   template:
-    src: remote.yaml
-    dest: {{ install_dir }}/config/remote.yaml
+    src: "remote.yaml"
+    dest: "{{ install_dir }}/config/remote.yaml"
     mode: 0644
     # agent will re-write this file with missing fields such as agent_id
     # and template_id, ansible only needs to bootstrap the file with secret_key
@@ -62,8 +62,8 @@
 
 - name: Create service file
   template:
-    src: observiq-agent.service
-    dest: /etc/systemd/system/{{ service_name }}.service
+    src: "observiq-agent.service"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
     mode: 0644
   notify:
     - reload systemctl
