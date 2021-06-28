@@ -30,6 +30,7 @@
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: 0755
+  notify: "restart {{ agent_type }} agent"
 
 - name: Install agent manager
   get_url:
@@ -38,6 +39,7 @@
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
     mode: 0755
+  notify: "restart {{ agent_type }} agent"
 
 - name: Install plugins
   ansible.builtin.unarchive:
@@ -45,6 +47,7 @@
     src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
     dest: "{{ install_dir }}/log_agent"
     remote_src: yes
+  notify: "restart {{ agent_type }} agent"
 
 - name: Remove temp directory
   file:
