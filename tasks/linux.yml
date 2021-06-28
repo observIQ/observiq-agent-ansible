@@ -6,7 +6,7 @@
     state: directory
     owner: "{{ service_user }}"
     group: "{{ service_user }}"
-    mode: 0755
+    mode: 0775
     recurse: true
   loop:
     - 'config'
