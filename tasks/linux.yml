@@ -28,6 +28,7 @@
     group: "{{ service_user }}"
     mode: 0755
   notify: "restart {{ agent_type }} agent"
+  register: launcher
 
 - name: Install agent manager
   get_url:
@@ -38,14 +39,19 @@
     mode: 0755
   notify: "restart {{ agent_type }} agent"
 
+- name: Register plugins directory
+  stat:
+    path: "{{ install_dir }}/log_agent/plugins"
+    register: plugin_dir
+
 - name: Install plugins
   ansible.builtin.unarchive:
     # creates {{ install_dir }}/log_agent/plugins
     src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
     dest: "{{ install_dir }}/log_agent"
     remote_src: yes
-    creates: "{{ install_dir }}/log_agent/plugins"
   notify: "restart {{ agent_type }} agent"
+  when: launcher.changed or not plugin_dir.stat.exists
 
 - name: Create config/remote.yaml
   template:
