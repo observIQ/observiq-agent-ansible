@@ -75,7 +75,7 @@
   # and websocket endpoint
   when:
     # always create if missing
-    - not remote_config_yaml.stat.exists || remote_config is undefined
+    - not remote_config_yaml.stat.exists or remote_config is undefined
     # required or has default, always exists
     - remote_config is defined and secret_key != remote_config.secret_key
     - remote_config is defined and websocket_connection_endpoint != remote_config.websocket_connection_endpoint
