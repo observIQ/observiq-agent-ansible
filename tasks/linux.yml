@@ -104,10 +104,10 @@
   # must be true for the condition to trigger the resource.
   when: (not remote_config_file.stat.exists)
     or (secret_key != current_secret_key)
-    or (websocket_connection_endpoint != current_endpoint)
     or (template_id != "" and template_id != current_template_id)
-    or (agent_id != "" and agent_id != current_agent_id)
-    or (agent_name != "" and agent_name != current_agent_name)
+    #or (websocket_connection_endpoint != current_endpoint)
+    #or (agent_id != "" and agent_id != current_agent_id)
+    #or (agent_name != "" and agent_name != current_agent_name)
 
 # Set remote.yaml perms because the template resource
 # will skip creation if the file is modified due to force: no.
