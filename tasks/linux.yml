@@ -56,13 +56,13 @@
 - name: Register remote.yaml
   stat:
     path: "{{ install_dir }}/config/remote.yaml"
-  register: remote_config_yaml
+  register: remote_config_file
 
 - name: Read remote.yaml values
-  include_vars:
-    file: "{{ install_dir }}/config/remote.yaml"
-    name: remote_config
-  when: remote_config_yaml.stat.exists
+  slurp:
+    src: "{{ install_dir }}/config/remote.yaml"
+  when: remote_config_file.stat.exists
+  register: remote_config_values
 
 - name: Create config/remote.yaml
   template:
@@ -75,13 +75,13 @@
   # and websocket endpoint
   when:
     # always create if missing
-    - not remote_config_yaml.stat.exists or remote_config is undefined
+    - not remote_config_file.stat.exists or remote_config_values is undefined
     # required or has default, always exists
-    #- remote_config is defined and secret_key != remote_config.secret_key
-    #- remote_config is defined and websocket_connection_endpoint != remote_config.websocket_connection_endpoint
+    #- remote_config_values is defined and secret_key != remote_config_values.secret_key
+    #- remote_config_values is defined and websocket_connection_endpoint != remote_config_values.websocket_connection_endpoint
     # only enforce if set on the ansible side
-    #- remote_config is defined and template_id != "" and template_id != remote_config.template_id
-    #- remote_config is defined and agent_id != "" and agent_id != remote_config.agent_id
+    #- remote_config_values is defined and template_id != "" and template_id != remote_config_values.template_id
+    #- remote_config_values is defined and agent_id != "" and agent_id != remote_config_values.agent_id
 
 
 # Set remote.yaml perms because the template resource
