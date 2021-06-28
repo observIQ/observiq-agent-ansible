@@ -52,6 +52,10 @@
 - name: Create config/remote.yaml
   template: src=remote.yaml dest={{ install_dir }}/config/remote.yaml mode=644
   notify: "restart {{ agent_type }} agent"
+  # agent will re-write this file with missing fields such as agent_id
+  # and template_id, ansible only needs to bootstrap the file with secret_key
+  # and websocket endpoint
+  force: no
 
 - name: Create service file
   template: src=observiq-agent.service dest=/etc/systemd/system/{{ service_name }}.service mode=644
