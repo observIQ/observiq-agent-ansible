@@ -70,19 +70,14 @@
     dest: "{{ install_dir }}/config/remote.yaml"
     mode: 0600
   notify: "restart {{ agent_type }} agent"
-  # agent will re-write this file with missing fields such as agent_id
+  # Agent will re-write this file with missing fields such as agent_id
   # and template_id, ansible only needs to bootstrap the file with secret_key
-  # and websocket endpoint
-  when:
-    # always create if missing
-    - not remote_config_file.stat.exists or remote_config_values is undefined
-    # required or has default, always exists
-    - remote_config_values is defined and secret_key != remote_config_values.secret_key
-    - remote_config_values is defined and websocket_connection_endpoint != remote_config_values.websocket_connection_endpoint
-    # only enforce if set on the ansible side
-    - remote_config_values is defined and template_id != "" and template_id != remote_config_values.template_id
-    - remote_config_values is defined and agent_id != "" and agent_id != remote_config_values.agent_id
-
+  # and websocket endpoint. Ansible will ignore values set in the config that
+  # it is not explicitly setting.
+  # 
+  # This condition is long, however, multiple when statements will not work as they all 
+  # must be true for the condition to trigger the resource.
+  when: not remote_config_file.stat.exists or remote_config_values is undefined or secret_key != remote_config_values.secret_key or websocket_connection_endpoint != remote_config_values.websocket_connection_endpoint or template_id != "" and template_id != remote_config_values.template_id or agent_id != "" and agent_id != remote_config_values.agent_id
 
 # Set remote.yaml perms because the template resource
 # will skip creation if the file is modified due to force: no.
