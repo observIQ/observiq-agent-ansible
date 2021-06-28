@@ -1,46 +1,96 @@
 ---
-- name: Create temp directory
-  tempfile:
-    path: /tmp
+- name: Create install directory tree
+  file:
+    # item is the loop value
+    path: "{{ install_dir }}/{{ item }}"
     state: directory
-    suffix: _observiq_shell_scripts
-  register: tempfolder
-  check_mode: false
-  changed_when: false
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0775
+    # when recurse is enabled, config file mode will be set to 0775
+    # which is a security risk
+    recurse: false
+  loop:
+    - 'config'
+    - 'launcher'
+    - 'log'
+    - 'log_agent'
+    - 'manager'
+    - 'manager/current'
+    - 'manager/previous'
+    - 'manager/previous/current'
 
-- name: Download script
+- name: Install agent launcher
   get_url:
-    # TODO: Support non amd64 arch instead of hardcoding 'linux-amd64'
-    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/linux-amd64/installer/observiq-agent-installer.sh"
-    dest: "{{ tempfolder.path }}/observiq-agent-installer.sh"
+    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-launcher-linux-amd64"
+    dest: "{{ install_dir }}/launcher/bpagent-launcher-linux-amd64"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
     mode: 0755
-  check_mode: false
-  changed_when: false
-
-- name: Install agent or uninstall agent
-  command:
-    chdir: "{{ tempfolder.path }}"
-    cmd: >
-      ./observiq-agent-installer.sh  {{ '--uninstall' if package_state == 'absent' }}
-        --accept-defaults
-        --install-dir {{ install_dir }}
-        --service-user {{ service_user }}
-        --service-name {{ service_name }}
-  environment:
-    SECRET_KEY: "{{ secret_key }}"
-    OBSERVIQ_ENDPOINT: "{{ websocket_connection_endpoint }}"
-  become: yes
-  register: result
-  retries: 2
-  delay: 3
-  until: result.rc == 0
-  check_mode: false
-  changed_when: "'Installation Complete!' in result.stdout_lines"
   notify: "restart {{ agent_type }} agent"
 
-- name: Remove temp directory
+- name: Install agent manager
+  get_url:
+    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-manager-linux-amd64"
+    dest: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0755
+  notify: "restart {{ agent_type }} agent"
+
+- name: Install plugins
+  ansible.builtin.unarchive:
+    # creates {{ install_dir }}/log_agent/plugins
+    src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
+    dest: "{{ install_dir }}/log_agent"
+    remote_src: yes
+    creates: "{{ install_dir }}/log_agent/plugins"
+  notify: "restart {{ agent_type }} agent"
+
+- name: Create config/remote.yaml
+  template:
+    src: "remote.yaml"
+    dest: "{{ install_dir }}/config/remote.yaml"
+    mode: 0600
+    # agent will re-write this file with missing fields such as agent_id
+    # and template_id, ansible only needs to bootstrap the file with secret_key
+    # and websocket endpoint
+    force: no
+  notify: "restart {{ agent_type }} agent"
+
+# Set remote.yaml perms because the template resource
+# will skip creation if the file is modified due to force: no.
+# We want to ensure 0600 due to remote.yaml containing sensitive
+# information such as secret_key.
+- name: Set config/remote.yaml mode
   file:
-    path: "{{ tempfolder.path }}"
-    state: absent
-  check_mode: false
-  changed_when: false
+    path: "{{ install_dir }}/config/remote.yaml"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0600
+    state: file
+
+- name: Create config/logging.yaml
+  template:
+    src: "logging.yaml"
+    dest: "{{ install_dir }}/config/logging.yaml"
+    mode: 0600
+  notify: "restart {{ agent_type }} agent"
+
+- name: Create config/os.yaml
+  template:
+    src: "os.yaml"
+    dest: "{{ install_dir }}/config/os.yaml"
+    mode: 0600
+  notify: "restart {{ agent_type }} agent"
+
+- name: Create service file
+  template:
+    src: "observiq-agent.service"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
+    mode: 0644
+  notify:
+    - reload systemctl
+
+- name: Start observiq-agent
+  service: name={{ service_name }}.service state=started enabled=yes

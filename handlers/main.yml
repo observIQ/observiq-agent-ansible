@@ -8,3 +8,6 @@
 - name: "restart windows {{ agent_type }} agent"
   win_shell: "Restart-Service -Name {{ service_name }} -Force"
   when: package_state == 'present' and not ansible_check_mode
+
+- name: reload systemctl
+  command: systemctl daemon-reload

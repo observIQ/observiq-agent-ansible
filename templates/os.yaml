@@ -1,0 +1,17 @@
+load:
+  collection_interval: 1m
+cpu:
+  collection_interval: 5s
+memory:
+  collection_interval: 10s
+network:
+  collection_interval: 10s
+disk:
+  enabled: false
+  collection_interval: 1m
+file_system:
+  enabled: false
+  collection_interval: 1m
+process:
+  enabled: false
+  collection_interval: 1m
