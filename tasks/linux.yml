@@ -58,6 +58,18 @@
     force: no
   notify: "restart {{ agent_type }} agent"
 
+# Set remote.yaml perms because the template resource
+# will skip creation if the file is modified due to force: no.
+# We want to ensure 0600 due to remote.yaml containing sensitive
+# information such as secret_key.
+- name: Set config/remote.yaml mode
+  file:
+    path: "{{ install_dir }}/config/remote.yaml"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0600
+    state: file
+
 - name: Create config/logging.yaml
   template:
     src: "logging.yaml"
