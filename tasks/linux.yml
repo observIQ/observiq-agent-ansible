@@ -53,73 +53,26 @@
   notify: "restart {{ agent_type }} agent"
   when: launcher.changed or not plugin_dir.stat.exists
 
-- name: Read remote.yaml
-  stat:
-    path: "{{ install_dir }}/config/remote.yaml"
-  register: remote_config_file
-  changed_when: false
+# Store configuratin options as a json file, changes to
+# this file will trigger an update to remote.yaml
+- name: Create config/remote.json
+  template: "remote.json"
+    src: "remote.yaml"
+    dest: "{{ install_dir }}/config/remote.yaml"
+    mode: 0600
+  register: remote_json
 
-- name: Read current agent id
-  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep agent_id | awk '{print $2}'"
-  register: current_agent_id
-  when: remote_config_file.stat.exists
-  changed_when: false
-
-- name: Read current agent name
-  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep agent_name | awk '{print $2}'"
-  register: current_agent_name
-  when: remote_config_file.stat.exists
-  changed_when: false
-
-- name: Read current endpoint
-  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep endpoint | awk '{print $2}'"
-  register: current_endpoint
-  when: remote_config_file.stat.exists
-  changed_when: false
-
-- name: Read current secret key
-  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep secret_key | awk '{print $2}'"
-  register: current_secret_key
-  when: remote_config_file.stat.exists
-  changed_when: false
-
-- name: Read current template id
-  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep template_id | awk '{print $2}'"
-  register: current_template_id
-  when: remote_config_file.stat.exists
-  changed_when: false
-
+# remote.yaml is dynamically configured by observIQ cloud, so we only
+# update it when there is a change to remote.json, which contains user
+# configured options. If the user does not set an agent_id, updates to
+# this file will cause a new agent to appear in observIQ cloud.
 - name: Create config/remote.yaml
   template:
     src: "remote.yaml"
     dest: "{{ install_dir }}/config/remote.yaml"
     mode: 0600
   notify: "restart {{ agent_type }} agent"
-  # Agent will re-write this file with missing fields such as agent_id
-  # and template_id, ansible only needs to bootstrap the file with secret_key
-  # and websocket endpoint. Ansible will ignore values set in the config that
-  # it is not explicitly setting.
-  # 
-  # This condition is long, however, multiple when statements will not work as they all 
-  # must be true for the condition to trigger the resource.
-  when: (not remote_config_file.stat.exists)
-    or (secret_key != current_secret_key)
-    or (template_id != "" and template_id != current_template_id)
-    #or (websocket_connection_endpoint != current_endpoint)
-    #or (agent_id != "" and agent_id != current_agent_id)
-    #or (agent_name != "" and agent_name != current_agent_name)
-
-# Set remote.yaml perms because the template resource
-# will skip creation if the file is modified due to force: no.
-# We want to ensure 0600 due to remote.yaml containing sensitive
-# information such as secret_key.
-- name: Set config/remote.yaml mode
-  file:
-    path: "{{ install_dir }}/config/remote.yaml"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: 0600
-    state: file
+  when: remote_json.changed
 
 - name: Create config/logging.yaml
   template:
