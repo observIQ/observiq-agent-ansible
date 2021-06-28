@@ -56,7 +56,7 @@
 # Store configuratin options as a json file, changes to
 # this file will trigger an update to remote.yaml
 - name: Create config/remote.json
-  template: "remote.json"
+  template:
     src: "remote.json"
     dest: "{{ install_dir }}/config/remote.json"
     mode: 0600
