@@ -53,16 +53,34 @@
   notify: "restart {{ agent_type }} agent"
   when: launcher.changed or not plugin_dir.stat.exists
 
+- name: Register remote.yaml
+  stat:
+    path: "{{ install_dir }}/config/remote.yaml"
+  register: remote_config_yaml
+
+- name: Read remote.yaml values
+  include_vars:
+    file: "{{ install_dir }}/config/remote.yaml"
+    name: remote_config
+  when: remote_config_yaml.stat.exists
+
 - name: Create config/remote.yaml
   template:
     src: "remote.yaml"
     dest: "{{ install_dir }}/config/remote.yaml"
     mode: 0600
-    # agent will re-write this file with missing fields such as agent_id
-    # and template_id, ansible only needs to bootstrap the file with secret_key
-    # and websocket endpoint
-    force: no
   notify: "restart {{ agent_type }} agent"
+  # agent will re-write this file with missing fields such as agent_id
+  # and template_id, ansible only needs to bootstrap the file with secret_key
+  # and websocket endpoint
+  when:
+    # required or has default, always exists
+    - secret_key != remote_config.secret_key
+    - websocket_connection_endpoint != remote_config.websocket_connection_endpoint
+    # only enforce if set on the ansible side
+    - template_id != "" and template_id != remote_config.template_id
+    - agent_id != "" and agent_id != remote_config.agent_id
+
 
 # Set remote.yaml perms because the template resource
 # will skip creation if the file is modified due to force: no.
