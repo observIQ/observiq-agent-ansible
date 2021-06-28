@@ -6,4 +6,5 @@ websocket_connection_endpoint: 'wss://connections.app.observiq.com'
 
 # required variables that can be empty
 agent_id: ""
+agent_name: ""
 template_id: ""

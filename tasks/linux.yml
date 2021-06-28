@@ -53,28 +53,26 @@
   notify: "restart {{ agent_type }} agent"
   when: launcher.changed or not plugin_dir.stat.exists
 
+# Store configuratin options as a json file, changes to
+# this file will trigger an update to remote.yaml
+- name: Create config/remote.json
+  template:
+    src: "remote.json"
+    dest: "{{ install_dir }}/config/remote.json"
+    mode: 0600
+  register: remote_json
+
+# remote.yaml is dynamically configured by observIQ cloud, so we only
+# update it when there is a change to remote.json, which contains user
+# configured options. If the user does not set an agent_id, updates to
+# this file will cause a new agent to appear in observIQ cloud.
 - name: Create config/remote.yaml
   template:
     src: "remote.yaml"
     dest: "{{ install_dir }}/config/remote.yaml"
     mode: 0600
-    # agent will re-write this file with missing fields such as agent_id
-    # and template_id, ansible only needs to bootstrap the file with secret_key
-    # and websocket endpoint
-    force: no
   notify: "restart {{ agent_type }} agent"
-
-# Set remote.yaml perms because the template resource
-# will skip creation if the file is modified due to force: no.
-# We want to ensure 0600 due to remote.yaml containing sensitive
-# information such as secret_key.
-- name: Set config/remote.yaml mode
-  file:
-    path: "{{ install_dir }}/config/remote.yaml"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: 0600
-    state: file
+  when: remote_json.changed
 
 - name: Create config/logging.yaml
   template:
