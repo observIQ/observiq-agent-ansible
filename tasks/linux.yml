@@ -1,46 +1,52 @@
 ---
-- name: Create temp directory
+- name: Create temp plugins directory
   tempfile:
     path: /tmp
     state: directory
-    suffix: _observiq_shell_scripts
-  register: tempfolder
-  check_mode: false
-  changed_when: false
+    suffix: _observiq_plugins
+  register: temp_plugins
 
-- name: Download script
-  get_url:
-    # TODO: Support non amd64 arch instead of hardcoding 'linux-amd64'
-    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/linux-amd64/installer/observiq-agent-installer.sh"
-    dest: "{{ tempfolder.path }}/observiq-agent-installer.sh"
+- name: Create install directory tree
+  file:
+    # item is the loop value
+    path: "{{ install_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
     mode: 0755
-  check_mode: false
-  changed_when: false
+    recurse: true
+  loop:
+    - 'config'
+    - 'launcher'
+    - 'log'
+    - 'log_agent'
+    - 'manager/current'
+    - 'previous/current'
 
-- name: Install agent or uninstall agent
-  command:
-    chdir: "{{ tempfolder.path }}"
-    cmd: >
-      ./observiq-agent-installer.sh  {{ '--uninstall' if package_state == 'absent' }}
-        --accept-defaults
-        --install-dir {{ install_dir }}
-        --service-user {{ service_user }}
-        --service-name {{ service_name }}
-  environment:
-    SECRET_KEY: "{{ secret_key }}"
-    OBSERVIQ_ENDPOINT: "{{ websocket_connection_endpoint }}"
-  become: yes
-  register: result
-  retries: 2
-  delay: 3
-  until: result.rc == 0
-  check_mode: false
-  changed_when: "'Installation Complete!' in result.stdout_lines"
-  notify: "restart {{ agent_type }} agent"
+- name: Install agent launcher
+  get_url:
+    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-launcher-linux-amd64"
+    dest: "{{ install_dir }}/launcher/bpagent-launcher-linux-amd64"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0755
+
+- name: Install agent manager
+  get_url:
+    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-manager-linux-amd64"
+    dest: "{{ install_dir }}/launcher/bpagent-manager-linux-amd64"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0755
+
+- name: Install plugins
+  ansible.builtin.unarchive:
+    # creates {{ install_dir }}/log_agent/plugins
+    src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
+    dest: "{{ install_dir }}/log_agent"
+    remote_src: yes
 
 - name: Remove temp directory
   file:
-    path: "{{ tempfolder.path }}"
+    path: "{{ temp_plugins.path }}"
     state: absent
-  check_mode: false
-  changed_when: false

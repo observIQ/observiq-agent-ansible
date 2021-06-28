@@ -1,7 +1,5 @@
 ---
-agent_type: observiq-agent
-package_state: present
-install_dir: /opt # Will result in /opt/observiq-agent
+install_dir: /opt/observiq-agent
 service_user: root
 service_name: observiq-agent
 websocket_connection_endpoint: 'wss://connections.app.observiq.com'

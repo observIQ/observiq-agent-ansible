@@ -15,9 +15,7 @@ Role Variables
 
 | Name                             | Default Value                         | Description                                                                                                                            | 
 | -------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `agent_type`                     | `observiq-agent`                      | The `agent_type` is a required variable used to specify which agent is being configured. The available options are `observiq-agent`.   | 
-| `package_state`                  | `installed`                           | TThe `package_state` variable can be used to specify the desired state of the agent. The allowed values are `present` (default) and `absent`. | 
-| `install_dir`                    | `/opt`                                | The directory the agent should be installed in. By default `/opt` means `/opt/observiq-agent` will be created | 
+| `install_dir`                    | `/opt/observiq-agent`                 | The directory the agent should be installed in. | 
 | `service_user`                   | `root`                                | The runtime username. Root is required if your agent configuration requires listening on a privileged network port. | 
 | `service_name`                   | `observiq-agent`                      | The service name used for managing the agent. | 
 | `websocket_connection_endpoint`  | `wss://connections.app.observiq.com`  | The websocket endpoint used to connect to observIQ Cloud's management interface, this should never be changed. | 
