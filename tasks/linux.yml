@@ -60,31 +60,31 @@
   changed_when: false
 
 - name: Read current agent id
-  ansible.builtin.command: "cat {{ install_dir }}/config/remote.yaml | grep agent_id | awk '{print $2}'"
+  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep agent_id | awk '{print $2}'"
   register: current_agent_id
   when: remote_config_file.stat.exists
   changed_when: false
 
 - name: Read current agent name
-  ansible.builtin.command: "cat {{ install_dir }}/config/remote.yaml | grep agent_name | awk '{print $2}'"
+  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep agent_name | awk '{print $2}'"
   register: current_agent_name
   when: remote_config_file.stat.exists
   changed_when: false
 
 - name: Read current endpoint
-  ansible.builtin.command: "cat {{ install_dir }}/config/remote.yaml | grep endpoint | awk '{print $2}'"
+  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep endpoint | awk '{print $2}'"
   register: current_endpoint
   when: remote_config_file.stat.exists
   changed_when: false
 
 - name: Read current secret key
-  ansible.builtin.command: "cat {{ install_dir }}/config/remote.yaml | grep secret_key | awk '{print $2}'"
+  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep secret_key | awk '{print $2}'"
   register: current_secret_key
   when: remote_config_file.stat.exists
   changed_when: false
 
 - name: Read current template id
-  ansible.builtin.command: "cat {{ install_dir }}/config/remote.yaml | grep template_id | awk '{print $2}'"
+  ansible.builtin.shell: "cat {{ install_dir }}/config/remote.yaml | grep template_id | awk '{print $2}'"
   register: current_template_id
   when: remote_config_file.stat.exists
   changed_when: false
