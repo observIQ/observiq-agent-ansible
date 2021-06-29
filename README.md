@@ -1,7 +1,7 @@
 Ansible Role For observIQ Cloud Agent
 ==========================
 
-[![Integration Tests](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/integration.yml/badge.svg)](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/integration.yml) 
+[![Ansible Lint](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/lint.yml/badge.svg)](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/lint.yml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 This Ansible role installs the observIQ Cloud agent.
@@ -79,41 +79,40 @@ playbook.yml
 
 Install [Gcloud SDK](https://cloud.google.com/sdk/docs/install)
 
-Install [Molecule](https://molecule.readthedocs.io/en/latest/installation.html):
-```
-python3 -m pip install "molecule[ansible]"
-```
-
-Install [Molecule GCE driver](https://github.com/ansible-community/molecule-gce): 
+Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html), [Molecule](https://molecule.readthedocs.io/en/latest/installation.html), [Molecule GCE driver](https://github.com/ansible-community/molecule-gce), and dependencies.
 ```bash
-pip3 install git+https://github.com/ansible-community/molecule-gce.git
+# Pip3
+pip install -r requirements.txt
+export PATH=~/.local/bin:$PATH
 ```
 
-Install pip requirements
-```bash
-pip3 install apache-libcloud pycrypto
-```
-
-Create a GCP service account with the following roles:
+Google Cloud Service Account
+1. Create a GCP service account with the following roles:
 - Compute Admin
 - Service Account User
+2. Create and download the service accounts json key
 
-Create and download the service accounts json key
+Export the following environment variables using a `.env` file in the repo's root directory:
+```
+export PROJECT=<google cloud project id>
+export SSH_KEY_FILE=<path to private key file created by gcloud compute config-ssh>
+export SSH_USER=<your gcloud ssh username>
+export GOOGLE_APPLICATION_CREDENTIALS=<path to google application credentials>
+export OIQ_SECRET_KEY=<observiq secret key>
+```
 
-Export the following environment variables
-- PROJECT: GCP project id
-- SSH_USER: User Ansible should use for ssh
-- SSH_KEY_FILE: Path to the ssh private key. The public key should be at the same path with the `.pub` suffix
-- GOOGLE_APPLICATION_CREDENTIALS: Path to the service accounts credentials
-- OIQ_SECRET_KEY: observIQ Cloud secret key
+Make sure [gcloud ssh is configured](https://cloud.google.com/sdk/gcloud/reference/compute/config-ssh?hl=zh-tw)
 
-#### Run Tests
+#### Run Tests Locally
+
+Local testing will use the service account for instance deployment and your personal 
+account for ssh and executing ansible.
 
 - molecule create
 - molecule converge
 - molecule idempotence
 - molecule verify
-- molecule destroy 
+- molecule destroy
 
 ## Credits
 

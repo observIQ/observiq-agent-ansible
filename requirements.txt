@@ -1,0 +1,6 @@
+ansible
+molecule[ansible]
+apache-libcloud 
+pycrypto
+git+https://github.com/ansible-community/molecule-gce.git
+google-auth

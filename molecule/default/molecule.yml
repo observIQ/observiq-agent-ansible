@@ -113,8 +113,8 @@ scenario:
     #- syntax
     - create
     - converge
-    #- idempotence
-    #- verify
+    - idempotence
+    - verify
     #- cleanup
     - destroy
 provisioner:
@@ -133,7 +133,7 @@ provisioner:
   playbooks:
     create: ../resources/playbooks/create.yml
     converge: ../resources/playbooks/converge.yml
-    #verify: ../resources/playbooks/verify.yml
+    verify: ../resources/playbooks/verify.yml
     #cleanup: ../resources/playbooks/cleanup.yml
     destroy: ../resources/playbooks/destroy.yml
 verifier:
