@@ -9,6 +9,9 @@ driver:
   ssh_user: ${SSH_USER}
   zone: us-east1-b
   region: us-east1
+lint: |
+  set -e
+  ansible-lint
 platforms:
   - name: "centos-7-${MOLECULE_SCENARIO_NAME}-${GIT_REV}"
     image_family: projects/centos-cloud/global/images/family/centos-7

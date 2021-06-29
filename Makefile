@@ -33,6 +33,14 @@ verify:
 destroy:
 	molecule destroy --parallel
 
+.PHONE: syntax
+syntax:
+	molecule syntax
+
+.PHONE: lint
+syntax:
+	molecule lint
+
 .PHONE: git-rev
 git-rev:
 	echo $$GIT_REV

@@ -61,8 +61,35 @@ jobs:
           pip install -r requirements.txt
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
-      - name: Run Molecule tests.
-        run: make test
+      - name: Lint.
+        run: make syntax && make lint
+
+      - name: Deploy Instances.
+        run: make create
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Converge.
+        run: make converge
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Check Idempotence.
+        run: make idempotence
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Verify.
+        run: make verify
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
