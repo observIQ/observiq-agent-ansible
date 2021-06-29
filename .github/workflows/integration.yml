@@ -51,7 +51,13 @@ jobs:
 
       - name: Run Molecule tests.
         run: make test
+        env:
+          SSH_PRIVATE_KEY_PATH: "~/.ssh/id_rsa"
+          SSH_PUBLIC_KEY_PATH: "~/.ssh/id_rsa.pub"
 
       - name: Cleanup test instances
         run: make clean
+        env:
+          SSH_PRIVATE_KEY_PATH: "~/.ssh/id_rsa"
+          SSH_PUBLIC_KEY_PATH: "~/.ssh/id_rsa.pub"
         if: ${{ always() }}

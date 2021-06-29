@@ -50,9 +50,6 @@
           - https://www.googleapis.com/auth/logging.write
           - https://www.googleapis.com/auth/logging.admin
           - https://www.googleapis.com/auth/cloud-platform
-    metadata:
-      enable-oslogin: false
-      ssh-keys: "{{ molecule_yml.driver.ssh_user }}:{{ lookup('file', molecule_yml.driver.ssh_pub_key_file) }}\n"
     tags:
       items:
         - ansibleinventory

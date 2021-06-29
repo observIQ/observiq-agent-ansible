@@ -104,11 +104,11 @@ Google Cloud Service Account
 
 Export the following environment variables using a `.env` file in the repo's root directory:
 ```
-export PROJECT=<google cloud project id>
-export SSH_KEY_FILE=<path to private key file created by gcloud compute config-ssh>
-export SSH_USER=<your gcloud ssh username>
-export GOOGLE_APPLICATION_CREDENTIALS=<path to google application credentials>
-export OIQ_SECRET_KEY=<observiq secret key>
+export GCP_PROJECT_ID=<project id>
+export GOOGLE_APPLICATION_CREDENTIALS=<path to service account json key>
+export SSH_KEY_FILE=<path to private ssh key used by gcp service account>
+export OIQ_SECRET_KEY=<oiq cloud secret key>
+export MOLECULE_SCENARIO_NAME=default
 ```
 
 Make sure [gcloud ssh is configured](https://cloud.google.com/sdk/gcloud/reference/compute/config-ssh?hl=zh-tw)
