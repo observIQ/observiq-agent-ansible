@@ -1,6 +1,6 @@
-ansible
-molecule[ansible]
-apache-libcloud 
-pycrypto
+ansible == 4.1.0
+molecule[ansible] == 3.3.4
+apache-libcloud == 3.3.1
+pycrypto == 2.6.1
 git+https://github.com/ansible-community/molecule-gce.git
-google-auth
+google-auth == 1.32.0
