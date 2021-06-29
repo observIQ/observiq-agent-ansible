@@ -71,6 +71,50 @@ playbook.yml
     template_id: 00000000-0000-0000-0000-000000000000
 ```
 
+## Developing
+
+### Testing
+
+#### Setup
+
+Install [Gcloud SDK](https://cloud.google.com/sdk/docs/install)
+
+Install [Molecule](https://molecule.readthedocs.io/en/latest/installation.html):
+```
+python3 -m pip install "molecule[ansible]"
+```
+
+Install [Molecule GCE driver](https://github.com/ansible-community/molecule-gce): 
+```bash
+pip3 install git+https://github.com/ansible-community/molecule-gce.git
+```
+
+Install pip requirements
+```bash
+pip3 install apache-libcloud pycrypto
+```
+
+Create a GCP service account with the following roles:
+- Compute Admin
+- Service Account User
+
+Create and download the service accounts json key
+
+Export the following environment variables
+- PROJECT: GCP project id
+- SSH_USER: User Ansible should use for ssh
+- SSH_KEY_FILE: Path to the ssh private key. The public key should be at the same path with the `.pub` suffix
+- GOOGLE_APPLICATION_CREDENTIALS: Path to the service accounts credentials
+- OIQ_SECRET_KEY: observIQ Cloud secret key
+
+#### Run Tests
+
+- molecule create
+- molecule converge
+- molecule idempotence
+- molecule verify
+- molecule destroy 
+
 ## Credits
 
 This repository was initially based on Google's [google-cloud-ops-agents-ansible](https://github.com/GoogleCloudPlatform/google-cloud-ops-agents-ansible)

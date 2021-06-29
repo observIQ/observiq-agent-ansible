@@ -1,0 +1,10 @@
+- name: test
+  hosts: all
+  become: true
+  tasks:
+    - name: Install agent
+      include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        version: "1.3.11"
+        secret_key:  "{{ lookup('env', 'OIQ_SECRET_KEY') }}"
