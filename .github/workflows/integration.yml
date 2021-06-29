@@ -32,12 +32,12 @@ jobs:
       - name: Deploy SSH Keypair
         run: |
           USERNAME=$(whoami)
-          mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
+          sudo mkdir -p /home/runner/.ssh
+          sudo chown $USERNAME /home/runner/.ssh
+          echo "$SSH_PRIVATE_KEY" > /home/runner/.ssh/id_rsa
+          echo "$SSH_PUBLIC_KEY" > /home/runner/.ssh/id_rsa.pub
           touch ~/.ssh/known_hosts
-          chmod -R 0600 ~/.ssh
-          chown -R $USERNAME ~/.ssh
+          chmod -R 0600 /home/runner/.ssh
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
@@ -70,7 +70,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_KEY_FILE: /home/runner/.ssh/id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Converge.
@@ -78,7 +78,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_KEY_FILE: /home/runner/.ssh/id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Check Idempotence.
@@ -86,7 +86,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_KEY_FILE: /home/runner/.ssh/id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Verify.
@@ -94,7 +94,7 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_KEY_FILE: /home/runner/.ssh/id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Cleanup test instances
@@ -102,6 +102,6 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_KEY_FILE: /home/runner/.ssh/id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
         if: ${{ always() }}
