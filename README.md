@@ -1,7 +1,7 @@
 Ansible Role For observIQ Cloud Agent
 ==========================
 
-[![Ansible Lint](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/lint.yml/badge.svg)](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/lint.yml) 
+[![Integration Tests](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/integration.yml/badge.svg)](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/integration.yml) 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 This Ansible role installs the observIQ Cloud agent.
