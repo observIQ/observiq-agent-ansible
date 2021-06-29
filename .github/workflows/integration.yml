@@ -35,8 +35,9 @@ jobs:
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
-          sudo chmod -R 0600 ~/.ssh
-          sudo chown -R $USERNAME ~/.ssh
+          touch ~/.ssh/known_hosts
+          chmod -R 0600 ~/.ssh
+          chown -R $USERNAME ~/.ssh
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
