@@ -31,7 +31,7 @@ verify:
 
 .PHONY: destroy
 destroy:
-	molecule destroy
+	molecule destroy --parallel
 
 .PHONE: git-rev
 git-rev:
