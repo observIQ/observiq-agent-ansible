@@ -1,13 +1,30 @@
 ---
 - name: "restart {{ agent_type }} agent"
-  service:
+  systemd:
     name: "{{ service_name }}.service"
     state: restarted
+    daemon_reload: true
   when: package_state == 'present' and not ansible_check_mode
 
 - name: "restart windows {{ agent_type }} agent"
   win_shell: "Restart-Service -Name {{ service_name }} -Force"
   when: package_state == 'present' and not ansible_check_mode
 
-- name: reload systemctl
-  command: systemctl daemon-reload
+- name: "install plugins"
+  ansible.builtin.unarchive:
+    # creates {{ install_dir }}/log_agent/plugins
+    src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
+    dest: "{{ install_dir }}/log_agent"
+    remote_src: true
+  notify: "restart {{ agent_type }} agent"
+
+# remote.yaml is dynamically configured by observIQ cloud, so we only
+# update it when there is a change to remote.json, which contains user
+# configured options. If the user does not set an agent_id, updates to
+# this file will cause a new agent to appear in observIQ cloud.
+- name: "create config/remote.yaml"
+  template:
+    src: "remote.yaml"
+    dest: "{{ install_dir }}/config/remote.yaml"
+    mode: 0600
+  notify: "restart {{ agent_type }} agent"
