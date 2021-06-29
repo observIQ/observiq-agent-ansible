@@ -1,6 +1,7 @@
 export PATH := ~/.local/bin:$(PATH)
 export PY_COLORS := "1"
 export ANSIBLE_FORCE_COLOR := "1"
+export GIT_REV := $(shell git rev-parse --short HEAD)
 
 .PHONY: install-tools
 install-tools:
@@ -31,3 +32,7 @@ verify:
 .PHONY: destroy
 destroy:
 	molecule destroy
+
+.PHONE: git-rev
+git-rev:
+	echo $$GIT_REV
