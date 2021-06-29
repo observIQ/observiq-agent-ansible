@@ -24,7 +24,7 @@ jobs:
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
-          chmod -R 0600 ~/.ssh
+          sudo chmod -R 0600 ~/.ssh
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
