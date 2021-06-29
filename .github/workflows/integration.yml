@@ -24,6 +24,13 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Cache Pip modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          # Cache will reset when requirements.txt is updated
+          key: ${{ hashFiles('requirements.txt') }}
+
       - name: Install Pip Modules.
         run: |
           pip install -r requirements.txt
