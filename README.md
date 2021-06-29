@@ -86,11 +86,21 @@ pip install -r requirements.txt
 export PATH=~/.local/bin:$PATH
 ```
 
+Configure Project SSH
+1. `gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE`
+
 Google Cloud Service Account
 1. Create a GCP service account with the following roles:
-- Compute Admin
-- Service Account User
+  - Compute Admin
+  - Compute OS Admin Login
+  - Service Account User
 2. Create and download the service accounts json key
+3. Create ssh keypair for service account
+  - `ssh-keygen -f ssh-key-ansible-sa`
+4. Authenticate as the service account and bind the ssh keypair
+  - `gcloud auth activate-service-account --key-file=<pat to service account json key`
+  - `gcloud compute os-login ssh-keys add --key-file=ssh-key-ansible-sa.pub`
+
 
 Export the following environment variables using a `.env` file in the repo's root directory:
 ```

@@ -5,12 +5,12 @@ dependency:
 driver:
   name: delegated
   gcp_service_account_key: ${GOOGLE_APPLICATION_CREDENTIALS}
-  gcp_project_id: ${PROJECT}
+  gcp_project_id: ${GCP_PROJECT_ID}
   zone: us-east1-b
   region: us-east1
   ssh_user: ${SSH_USER}
-  ssh_pub_key_file: "${SSH_KEY_FILE}.pub"
-  ssh_key_file: ${SSH_KEY_FILE}
+  ssh_pub_key_file: "~/.ssh/id_rsa.pub"
+  ssh_key_file: "~/.ssh/id_rsa"
 lint: |
   set -e
   yamllint .
