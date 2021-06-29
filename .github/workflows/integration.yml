@@ -52,12 +52,16 @@ jobs:
       - name: Run Molecule tests.
         run: make test
         env:
-          SSH_PRIVATE_KEY_PATH: "~/.ssh/id_rsa"
-          SSH_PUBLIC_KEY_PATH: "~/.ssh/id_rsa.pub"
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Cleanup test instances
         run: make clean
         env:
-          SSH_PRIVATE_KEY_PATH: "~/.ssh/id_rsa"
-          SSH_PUBLIC_KEY_PATH: "~/.ssh/id_rsa.pub"
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: ~/.ssh/id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
         if: ${{ always() }}
