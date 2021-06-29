@@ -31,3 +31,7 @@ jobs:
 
       - name: Run Molecule tests.
         run: make test
+
+      - name: Cleanup test instances
+        run: make clean
+        if: ${{ always() }}
