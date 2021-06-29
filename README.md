@@ -1,6 +1,9 @@
 Ansible Role For observIQ Cloud Agent
 ==========================
 
+[![Ansible Lint](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/lint.yml/badge.svg)](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/lint.yml) 
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
 This Ansible role installs the observIQ Cloud agent.
 
 Install this directory in your roles path (usually in a `roles` directory
