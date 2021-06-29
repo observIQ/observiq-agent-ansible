@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy SSH Keypair
         run: |
+          USERNAME=$(whoami)
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
@@ -40,7 +41,6 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
-          USERNAME: ${{ github.actor }}
 
       - name: Set up Python 3.
         uses: actions/setup-python@v2
