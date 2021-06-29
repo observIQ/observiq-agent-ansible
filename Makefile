@@ -7,7 +7,7 @@ install-tools:
 	pip install -r requirements.txt
 
 .PHONY: test
-test: install-tools create converge idempotence verify
+test: create converge idempotence verify
 
 .PHONY: clean
 clean: destroy
