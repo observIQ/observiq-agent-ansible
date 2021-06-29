@@ -35,10 +35,12 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
           sudo chmod -R 0600 ~/.ssh
+          sudo chown -R $USERNAME ~/.ssh
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+          USERNAME: ${{ github.actor }}
 
       - name: Set up Python 3.
         uses: actions/setup-python@v2
