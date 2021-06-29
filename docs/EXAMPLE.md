@@ -20,6 +20,7 @@ playbook.yml
 ```yaml
 - name: observiq
   hosts: all
+  become: yes
   roles:
   - role: observiq_cloud_agent
     version: "1.3.11"
@@ -36,6 +37,7 @@ playbook.yml
 ```yaml
 - name: observiq
   hosts: all
+  become: yes
   roles:
   - role: observiq_cloud_agent
     version: "1.3.11"
