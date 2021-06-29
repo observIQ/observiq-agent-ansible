@@ -1,4 +1,3 @@
 ---
-observiq-agent_service_name: observiq-agent.service
 agent_type: 'observiq-agent'
 package_state: 'present'

@@ -1,0 +1,105 @@
+name: Integration Tests
+on: 
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.gitignore'
+      - 'LICENSE'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.gitignore'
+      - 'LICENSE'
+jobs:
+  integration:
+    name: Molecule
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout the codebase.
+        uses: actions/checkout@v2
+
+      - name: Install Gcloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Deploy SSH Keypair
+        run: |
+          USERNAME=$(whoami)
+          echo "$SSH_PRIVATE_KEY" > id_rsa
+          echo "$SSH_PUBLIC_KEY" > id_rsa.pub
+          chmod -R 0600 id_rsa
+          chmod -R 0600 id_rsa.pub
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_PUBLIC_KEY: ${{secrets.SSH_PUBLIC_KEY}}
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      # https://github.com/actions/cache/blob/main/examples.md#python---pip
+      - name: Cache Pip modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Pip Modules.
+        run: |
+          pip install -r requirements.txt
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+
+      - name: Lint.
+        run: make syntax && make lint
+
+      - name: Deploy Instances.
+        run: make create
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Converge.
+        run: make converge
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Check Idempotence.
+        run: make idempotence
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Verify.
+        run: make verify
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+
+      - name: Cleanup test instances
+        run: make clean
+        env:
+          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+          SSH_KEY_FILE: id_rsa
+          SSH_USER: ${{secrets.SSH_USER}}
+        if: ${{ always() }}
