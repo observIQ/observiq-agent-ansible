@@ -35,12 +35,14 @@ jobs:
         with:
           python-version: '3.x'
 
+      # https://github.com/actions/cache/blob/main/examples.md#python---pip
       - name: Cache Pip modules
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
-          # Cache will reset when requirements.txt is updated
-          key: ${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install Pip Modules.
         run: |
