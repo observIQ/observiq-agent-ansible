@@ -9,6 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - uses: actions/cache@v2
+      name: cache pip
+      with:
+        path: ~/.cache/pip
+        key: ansible-lint
+
+    - name: install
+      run: pip install ansible-lint
+
     - name: Lint Ansible Playbook
       uses: ansible/ansible-lint-action@master
       with:
