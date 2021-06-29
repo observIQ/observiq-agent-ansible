@@ -38,7 +38,7 @@ syntax:
 	molecule syntax
 
 .PHONE: lint
-syntax:
+lint:
 	molecule lint
 
 .PHONE: git-rev
