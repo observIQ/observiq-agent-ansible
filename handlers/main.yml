@@ -4,7 +4,6 @@
     name: "{{ service_name }}.service"
     state: restarted
     daemon_reload: true
-  when: package_state == 'present' and not ansible_check_mode
 
 - name: "restart windows {{ agent_type }} agent"
   win_shell: "Restart-Service -Name {{ service_name }} -Force"

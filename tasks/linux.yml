@@ -20,6 +20,12 @@
     - 'manager/previous'
     - 'manager/previous/current'
 
+- name: Create service file
+  template:
+    src: "observiq-agent.service"
+    dest: "/etc/systemd/system/{{ service_name }}.service"
+    mode: 0644
+
 - name: Register manager
   stat:
     path: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64"
@@ -64,7 +70,7 @@
   when: not plugin_dir.stat.exists
   notify:
     - "restart {{ agent_type }} agent"
-    - "install plugins"
+    - "download and install plugins"
 
 # Store configuration options as a json file, changes to
 # this file will trigger an update to remote.yaml
@@ -89,13 +95,3 @@
     dest: "{{ install_dir }}/config/os.yaml"
     mode: 0600
   notify: "restart {{ agent_type }} agent"
-
-- name: Create service file
-  template:
-    src: "observiq-agent.service"
-    dest: "/etc/systemd/system/{{ service_name }}.service"
-    mode: 0644
-  notify: "restart {{ agent_type }} agent"
-
-- name: Start observiq-agent
-  service: name={{ service_name }}.service state=started enabled=yes
