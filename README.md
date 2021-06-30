@@ -19,7 +19,7 @@ Role Variables
 
 | Name                             | Default Value                         | Description                                                                                                                            | 
 | -------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `version`                        | required                              | The `version` is required to specify which version of the agent to install. Supported versions: 1.3.11 or newer. | 
+| `version`                        | required                              | The `version` is required to specify which version of the agent to install. Supported versions: 1.3.15 or newer. | 
 | `secret_key`                     | required                              | The `secret_key` is required for connecting to observIQ Cloud's management and ingestion services. | 
 | `template_id`                    | optional                              | The `template_id` optionally install the agent and bind it to an observIQ cloud template. | 
 | `install_dir`                    | `/opt/observiq-agent`                 | The directory the agent should be installed in. | 
@@ -38,7 +38,7 @@ playbook.yml
   become: yes
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.11"
+    version: "1.3.15"
     secret_key: 00000000-0000-0000-0000-000000000000
 ```
 

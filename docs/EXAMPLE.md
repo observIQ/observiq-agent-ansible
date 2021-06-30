@@ -23,7 +23,7 @@ playbook.yml
   become: yes
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.11"
+    version: "1.3.15"
     secret_key: 00000000-0000-0000-0000-000000000000
 ```
 
@@ -40,7 +40,7 @@ playbook.yml
   become: yes
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.11"
+    version: "1.3.15"
     secret_key: 00000000-0000-0000-0000-000000000000
     template_id: 00000000-0000-0000-0000-000000000000
 ```
