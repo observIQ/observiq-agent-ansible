@@ -10,14 +10,6 @@
   win_shell: "Restart-Service -Name {{ service_name }} -Force"
   when: package_state == 'present' and not ansible_check_mode
 
-- name: "install plugins"
-  ansible.builtin.unarchive:
-    # creates {{ install_dir }}/log_agent/plugins
-    src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
-    dest: "{{ install_dir }}/log_agent"
-    remote_src: true
-  notify: "restart {{ agent_type }} agent"
-
 # remote.yaml is dynamically configured by observIQ cloud, so we only
 # update it when there is a change to remote.json, which contains user
 # configured options. If the user does not set an agent_id, updates to
@@ -28,3 +20,28 @@
     dest: "{{ install_dir }}/config/remote.yaml"
     mode: 0600
   notify: "restart {{ agent_type }} agent"
+
+# When manager is changed, we want to replace the plugins with the matching version
+- name: "install plugins"
+  file:
+    path: "{{ install_dir }}/log_agent/plugins"
+    state: absent
+    recurse: yes
+  notify: "download and install plugins"
+- name: "download and install plugins"
+  ansible.builtin.unarchive:
+    src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
+    dest: "{{ install_dir }}/log_agent"
+    remote_src: true
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+  notify:
+    - "restart {{ agent_type }} agent"
+    - "chown plugins"
+- name: "chown plugins"
+  ansible.builtin.file:
+    path: "{{ install_dir }}/log_agent/plugins"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    state: directory
+    recurse: yes

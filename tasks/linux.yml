@@ -20,15 +20,17 @@
     - 'manager/previous'
     - 'manager/previous/current'
 
-- name: Install agent launcher
-  get_url:
-    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-launcher-linux-amd64"
-    dest: "{{ install_dir }}/launcher/bpagent-launcher-linux-amd64"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: 0755
-  notify: "restart {{ agent_type }} agent"
-  register: launcher
+- name: Register manager
+  stat:
+    path: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64"
+  register: manager
+  changed_when: false
+
+- name: Check manager version
+  command: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64 --version"
+  when: manager.stat.exists
+  register: manager_version
+  changed_when: false
 
 - name: Install agent manager
   get_url:
@@ -38,15 +40,31 @@
     group: "{{ service_user }}"
     mode: 0755
   notify:
-    # log agent is embeded in the manager binary, so install plugins
-    # when manager is changed
-    - "install plugins"
     - "restart {{ agent_type }} agent"
+    - "install plugins"
+  when: ( not manager.stat.exists )
+    or ( version != manager_version.stdout)
 
-- name: Register plugins directory
+- name: "Install agent launcher"
+  get_url:
+    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-launcher-linux-amd64"
+    dest: "{{ install_dir }}/launcher/bpagent-launcher-linux-amd64"
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: 0755
+  notify: "restart {{ agent_type }} agent"
+
+- name: "Register plugins"
   stat:
     path: "{{ install_dir }}/log_agent/plugins"
   register: plugin_dir
+
+- name: "Install plugins"
+  command: "echo 'installing plugins'"
+  when: not plugin_dir.stat.exists
+  notify:
+    - "restart {{ agent_type }} agent"
+    - "install plugins"
 
 # Store configuration options as a json file, changes to
 # this file will trigger an update to remote.yaml
