@@ -26,7 +26,6 @@
   file:
     path: "{{ install_dir }}/log_agent/plugins"
     state: absent
-    recurse: yes
   notify: "download and install plugins"
 - name: "download and install plugins"
   ansible.builtin.unarchive:
