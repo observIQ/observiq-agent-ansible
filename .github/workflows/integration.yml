@@ -22,6 +22,12 @@ jobs:
       - name: Checkout the codebase.
         uses: actions/checkout@v2
 
+      - name: Install python version
+        uses: gabrielfalcao/pyenv-action@v5
+        with:
+          default: "3.9.4"
+          command: pip install -U pip # upgrade pip after installing python
+
       - name: Install Gcloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -57,7 +63,7 @@ jobs:
 
       - name: Install Pip Modules.
         run: |
-          pip install -r requirements.txt
+          pip3 install -r requirements.txt
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
       - name: Lint.
