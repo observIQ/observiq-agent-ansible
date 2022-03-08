@@ -29,11 +29,12 @@ jobs:
           command: pip install -U pip # upgrade pip after installing python
 
       - name: Install Gcloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0.5.1
+
+      - name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.6.0'
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Deploy SSH Keypair
         run: |
@@ -81,7 +82,7 @@ jobs:
 
       - name: Get short git hash
         id: sha-hash
-        run: echo '::set-output name=hash::$(git rev-parse --short HEAD)'
+        run: echo "::set-output name=hash::$(git rev-parse --short HEAD)"
 
       - name: Converge.
         run: make converge
