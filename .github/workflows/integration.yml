@@ -18,6 +18,12 @@ jobs:
   integration:
     name: Molecule
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - "headless"
+          - "opamp"
     steps:
       - name: Checkout the codebase.
         uses: actions/checkout@v2
@@ -81,7 +87,7 @@ jobs:
           ansible-galaxy collection install community.crypto
 
       - name: Converge.
-        run: make converge
+        run: molecule converge -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
@@ -89,7 +95,7 @@ jobs:
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Check Idempotence.
-        run: make idempotence
+        run: molecule idempotence -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
@@ -97,15 +103,15 @@ jobs:
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Verify.
-        run: make verify
+        run: molecule verify -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
 
-      - name: Cleanup test instances
-        run: make clean
+      - name: Cleanup test instances.
+        run: molecule destroy -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}

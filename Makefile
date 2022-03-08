@@ -30,7 +30,7 @@ verify:
 
 .PHONY: destroy
 destroy:
-	molecule destroy --parallel
+	molecule destroy
 
 .PHONE: syntax
 syntax:
