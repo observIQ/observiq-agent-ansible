@@ -19,7 +19,7 @@ Role Variables
 | Name           | Default Value                        | Description                                                                                                         | 
 | -------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------  |
 | `version`      | required                             | The `version` is required to specify which version of the agent to install. Supported versions: 2.2.3 or newer.     | 
-| `headless`     | `true`                        \      | When true, the agent will not attempt to connect to a remote platform (such as observIQ Cloud).                     |
+| `headless`     | `true`                               | When true, the agent will not attempt to connect to a remote platform (such as observIQ Cloud).                     |
 | `protocol`     | `observiq`                           | The protocol to use when connecting to a platform (`observIQ`, `opamp`).                                            |
 | `endpoint`     | `wss://connections.app.observiq.com` | Platform websocket endpoint. Only used when `headless: false`                                                       | 
 | `secret_key`   | optional                             | Required when `headless: false`. The `secret_key` is required for connecting to a platform.                         | 
