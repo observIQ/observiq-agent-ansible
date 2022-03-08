@@ -7,16 +7,18 @@
 Install [Gcloud SDK](https://cloud.google.com/sdk/docs/install)
 
 Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html), [Molecule](https://molecule.readthedocs.io/en/latest/installation.html), [Molecule GCE driver](https://github.com/ansible-community/molecule-gce), and dependencies.
+
 ```bash
-# Pip3
 pip install -r requirements.txt
 export PATH=~/.local/bin:$PATH
+
+ansible-galaxy collection install google.cloud
+ansible-galaxy collection install community.crypto
 ```
 
 Configure Project
 1. `gcloud compute project-info add-metadata --metadata enable-oslogin=TRUE`
 2. Enable api `IAM Service Account Credentials API`
-3. Enable api `
 
 Google Cloud Service Account
 1. Create a GCP service account with the following roles:
@@ -40,7 +42,10 @@ export GOOGLE_APPLICATION_CREDENTIALS=<path to service account json key>
 export SSH_KEY_FILE=<path to private ssh key used by gcp service account>
 export OIQ_SECRET_KEY=<oiq cloud secret key>
 export SSH_USER=sa_<service account's id>
+export GCP_AUTH_KIND=serviceaccount
 ```
+
+**NOTE**: SSH_USER is prefixed with `sa_`.
 
 Make sure [gcloud ssh is configured](https://cloud.google.com/sdk/gcloud/reference/compute/config-ssh?hl=zh-tw)
 

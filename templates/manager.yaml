@@ -1,0 +1,33 @@
+# headless mode, when true, agent will not attempt to connect
+# to a platform
+headless: {{ headless }}
+
+# platform secret key
+secret_key: {{ secret_key }}
+
+# platform endpoint
+endpoint: {{ websocket_connection_endpoint }}
+
+# agent uuid
+agent_id: {{ agent_id }}
+
+# template id for platforms that accept them
+template_id: {{ template_id }}
+
+# protocol: platforms protocol
+protocol: {{ protocol }}
+
+# labels for platforms that accept them
+labels: {{ labels }}
+
+# TLS configuration
+#
+# x509 PEM certificate file path
+tlscert: {{ tlscert }}
+
+# x509 PEM private key file path
+tlskey: {{ tlskey }}
+
+# x509 PEM certificate authority file path
+cacert: {{ cacert }}
+

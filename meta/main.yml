@@ -29,11 +29,6 @@ galaxy_info:
       versions:
         - 12
         - 15
-    - name: Windows
-      versions:
-        - 2012
-        - 2016
-        - 2019
   galaxy_tags:
     - observiq
     - stanza

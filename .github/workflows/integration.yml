@@ -18,6 +18,15 @@ jobs:
   integration:
     name: Molecule
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          # scenario names are derived from molecule scenarios
+          # at molecule/
+          - "headless"
+          - "opamp"
+          - "observiq"
     steps:
       - name: Checkout the codebase.
         uses: actions/checkout@v2
@@ -29,11 +38,12 @@ jobs:
           command: pip install -U pip # upgrade pip after installing python
 
       - name: Install Gcloud SDK
-        uses: google-github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@v0.5.1
+
+      - name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.6.0'
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Deploy SSH Keypair
         run: |
@@ -60,25 +70,29 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-
+        
       - name: Install Pip Modules.
         run: |
           pip3 install -r requirements.txt
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
-      - name: Lint.
-        run: make syntax && make lint
+      - name: Install Galaxy Modules
+        run: |
+          ansible-galaxy collection install google.cloud
+          ansible-galaxy collection install community.crypto
 
-      - name: Deploy Instances.
-        run: make create
-        env:
-          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
-          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: id_rsa
-          SSH_USER: ${{secrets.SSH_USER}}
+      - name: Lint.
+        run: |
+          molecule syntax -s ${{ matrix.scenario }}
+          molecule lint -s ${{ matrix.scenario }}
+
+      - name: Install Galaxy Modules
+        run: |
+          ansible-galaxy collection install google.cloud
+          ansible-galaxy collection install community.crypto
 
       - name: Converge.
-        run: make converge
+        run: molecule converge -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
@@ -86,7 +100,7 @@ jobs:
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Check Idempotence.
-        run: make idempotence
+        run: molecule idempotence -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
@@ -94,15 +108,15 @@ jobs:
           SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Verify.
-        run: make verify
+        run: molecule verify -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
 
-      - name: Cleanup test instances
-        run: make clean
+      - name: Cleanup test instances.
+        run: molecule destroy -s ${{ matrix.scenario }}
         env:
           GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}

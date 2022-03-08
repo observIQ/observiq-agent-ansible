@@ -2,10 +2,9 @@ Ansible Role For observIQ Cloud Agent
 ==========================
 
 [![Integration Tests](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/integration.yml/badge.svg)](https://github.com/observIQ/observiq-agent-ansible/actions/workflows/integration.yml)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This Ansible role installs the observIQ Cloud agent.
+This Ansible role installs the observIQ OpenTelemetry agent.
 
 Install this directory in your roles path (usually in a `roles` directory
 alongside your playbook) under the name `observiq_cloud_agent`:
@@ -17,19 +16,24 @@ git clone https://github.com/observIQ/observiq-agent-ansible.git roles/observiq_
 Role Variables
 --------------
 
-| Name                             | Default Value                         | Description                                                                                                                            | 
-| -------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `version`                        | required                              | The `version` is required to specify which version of the agent to install. Supported versions: 1.3.15 or newer. | 
-| `secret_key`                     | required                              | The `secret_key` is required for connecting to observIQ Cloud's management and ingestion services. | 
-| `template_id`                    | optional                              | The `template_id` optionally install the agent and bind it to an observIQ cloud template. | 
-| `install_dir`                    | `/opt/observiq-agent`                 | The directory the agent should be installed in. | 
-| `service_user`                   | `root`                                | The runtime username. Root is required if your agent configuration requires listening on a privileged network port. The playbook will not create this user. | 
-| `service_name`                   | `observiq-agent`                      | The service name used for managing the agent. | 
-| `websocket_connection_endpoint`  | `wss://connections.app.observiq.com`  | The websocket endpoint used to connect to observIQ Cloud's management interface, this should never be changed. | 
+| Name                             | Default Value  | Description                                                                                                         | 
+| -------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------- - |
+| `version`                        | required       | The `version` is required to specify which version of the agent to install. Supported versions: 2.2.3 or newer.     | 
+| `headless`                       | `true`         | When true, the agent will not attempt to connect to a remote platform (such as observIQ Cloud).                     |
+| `protocol`                       | `observiq`     | The protocol to use when connecting to a platform (`observIQ`, `opamp`).                                            |
+| `websocket_connection_endpoint`  | `wss://connections.app.observiq.com` | Platform websocket endpoint. Only used when `headless: false`                                 | 
+| `secret_key`                     | optional       | Required when `headless: false`. The `secret_key` is required for connecting to a platform.                         | 
+| `template_id`                    | optional       | The `template_id` binds the agent to a configuration template (observiq specific. Requires `protocol: observiq`).   | 
+| `agent_id`                       | optional       | The agent ID to use when connecting to a platform. When unset, the platform will assign an ID.                      |
+| `labels`                         | optional       | Labels assigned to the agent. When protocol is `opamp`, the platform will push configs that match the given labels. |
+| `cacert`                         | optional       | x509 PEM encoded CA certificate, used to trust the platforms certificate. Only required if the platform's certificate authoritity is not already trusted by the operating system. |
+| `tlscert`                        | optional       | x509 PEM encoded certificate file path, used for mutual TLS authentication.                                         |
+| `tlskey`                         | optional       | x509 PEM encoded private key file path, used for mutual TLS authentication.                                         |
+
 
 ## Examples
 
-`version` and `secret_key` are the only required values.
+`version` is the only required value.
 
 playbook.yml
 ```yaml
@@ -38,9 +42,10 @@ playbook.yml
   become: yes
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.15"
-    secret_key: 00000000-0000-0000-0000-000000000000
+    version: "2.2.3"
 ```
+
+Once installed, the collector configuration can be found at `/opt/observiq-agent/config/collector.yaml`.
 
 ## Credits
 

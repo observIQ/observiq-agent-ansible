@@ -3,27 +3,19 @@
   include_vars:
     file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/vars/main.yml"
 
-- name: Stat remote.yaml
+- name: Stat manager.yaml
   stat:
-    path: "/opt/observiq-agent/config/remote.yaml"
+    path: "/opt/observiq-agent/config/manager.yaml"
   register: result
-- name: Assert remote.yaml exists
+- name: Assert manager.yaml exists
   assert:
     that: result.stat.exists
 
-- name: Stat remote.json
+- name: Stat manager.json
   stat:
-    path: "/opt/observiq-agent/config/remote.json"
+    path: "/opt/observiq-agent/config/manager.json"
   register: result
-- name: Assert remote.json exists
-  assert:
-    that: result.stat.exists
-
-- name: Stat os.yaml
-  stat:
-    path: "/opt/observiq-agent/config/os.yaml"
-  register: result
-- name: Assert os.yaml exists
+- name: Assert manager.json exists
   assert:
     that: result.stat.exists
 
@@ -37,7 +29,7 @@
   
 - name: Stat launcher binary
   stat:
-    path: "/opt/observiq-agent/launcher/bpagent-launcher-linux-amd64"
+    path: "/opt/observiq-agent/launcher/observiq-launcher"
   register: result
 - name: Assert bpagent-launcher-linux-amd64 exists
   assert:
@@ -45,9 +37,9 @@
 
 - name: Stat manager binary
   stat:
-    path: "/opt/observiq-agent/manager/current/bpagent-manager-linux-amd64"
+    path: "/opt/observiq-agent/manager/current/observiq-manager-linux-amd64"
   register: result
-- name: Assert bpagent-manager-linux-amd64 exists
+- name: Assert observiq-manager-linux-amd64 exists
   assert:
     that: result.stat.exists
 

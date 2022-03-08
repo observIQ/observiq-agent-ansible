@@ -1,0 +1,86 @@
+---
+# This file is the central configuration entrypoint for Molecule. With this file, you can configure each tool that Molecule will employ when testing the role.
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  gcp_service_account_key: ${GOOGLE_APPLICATION_CREDENTIALS}
+  gcp_project_id: ${GCP_PROJECT_ID}
+  ssh_user: ${SSH_USER}
+  zone: us-east1-b
+  region: us-east1
+lint: |
+  set -e
+  ansible-lint
+platforms:
+  - name: "centos-7-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/centos-cloud/global/images/family/centos-7
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - centos
+  - name: "centos-8-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/rocky-linux-cloud/global/images/family/rocky-linux-8
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - centos
+  - name: "rhel-8-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/rhel-cloud/global/images/family/rhel-8
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - rhel
+  - name: "ubuntu-1804-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - ubuntu
+  - name: "ubuntu-2004-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - ubuntu
+  - name: "debian-10-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/debian-cloud/global/images/family/debian-10
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - debian
+  - name: "sles-15-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
+    image_family: projects/suse-cloud/global/images/family/sles-15
+    machine_type: e2-small
+    size_gb: 40
+    groups:
+      - linux
+      - sles
+scenario:
+  test_sequence:
+    - destroy
+    - syntax
+    - create
+    - converge
+    - idempotence
+    - verify
+    - destroy
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      linux:
+        ansible_ssh_private_key_file: ${SSH_KEY_FILE}
+  playbooks:
+    create: ../resources/create.yml
+    converge: ./converge.yml
+    verify: ../resources/verify.yml
+    destroy: ../resources/destroy.yml
+verifier:
+  name: ansible
