@@ -6,7 +6,7 @@ headless: {{ headless }}
 secret_key: {{ secret_key }}
 
 # platform endpoint
-endpoint: {{ websocket_connection_endpoint }}
+endpoint: {{ endpoint }}
 
 # agent uuid
 agent_id: {{ agent_id }}

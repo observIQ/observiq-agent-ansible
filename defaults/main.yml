@@ -7,7 +7,7 @@ install_dir: '/opt/observiq-agent'
 #
 # Required values with defaults
 headless: true
-websocket_connection_endpoint: 'wss://connections.app.observiq.com'
+endpoint: 'wss://connections.app.observiq.com'
 # Variables that can be empty
 secret_key: ""
 agent_id: ""
