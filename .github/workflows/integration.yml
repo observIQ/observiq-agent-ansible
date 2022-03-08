@@ -22,8 +22,11 @@ jobs:
       fail-fast: false
       matrix:
         scenario:
+          # scenario names are derived from molecule scenarios
+          # at molecule/
           - "headless"
           - "opamp"
+          - "observiq"
     steps:
       - name: Checkout the codebase.
         uses: actions/checkout@v2
@@ -79,7 +82,9 @@ jobs:
           ansible-galaxy collection install community.crypto
 
       - name: Lint.
-        run: make syntax && make lint
+        run: |
+          molecule syntax -s ${{ matrix.scenario }}
+          molecule lint -s ${{ matrix.scenario }}
 
       - name: Install Galaxy Modules
         run: |
