@@ -119,3 +119,4 @@ jobs:
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
           SHA_HASH: ${{ steps.sha-hash.outputs.hash }}"
+        if: ${{ always() }}
