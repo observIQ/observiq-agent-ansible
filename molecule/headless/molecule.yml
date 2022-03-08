@@ -27,13 +27,6 @@ platforms:
     groups:
       - linux
       - centos
-  - name: "rhel-7-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
-    image_family: projects/rhel-cloud/global/images/family/rhel-7
-    machine_type: e2-small
-    size_gb: 40
-    groups:
-      - linux
-      - rhel
   - name: "rhel-8-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
     image_family: projects/rhel-cloud/global/images/family/rhel-8
     machine_type: e2-small
@@ -55,13 +48,6 @@ platforms:
     groups:
       - linux
       - ubuntu
-  - name: "debian-9-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
-    image_family: projects/debian-cloud/global/images/family/debian-9
-    machine_type: e2-small
-    size_gb: 40
-    groups:
-      - linux
-      - debian
   - name: "debian-10-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
     image_family: projects/debian-cloud/global/images/family/debian-10
     machine_type: e2-small
