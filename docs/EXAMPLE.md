@@ -14,7 +14,7 @@ all:
 
 ### Required Values
 
-`version` and `secret_key` are the only required values.
+`version` is the only required value.
 
 playbook.yml
 ```yaml
@@ -23,11 +23,10 @@ playbook.yml
   become: yes
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.15"
-    secret_key: 00000000-0000-0000-0000-000000000000
+    version: "2.2.3"
 ```
 
-### Template
+### observIQ Cloud w/ Template
 
 You can install an agent using an observIQ cloud template, which will install log
 sources automatically. This can be useful for deployments at scale with identical
@@ -40,7 +39,46 @@ playbook.yml
   become: yes
   roles:
   - role: observiq_cloud_agent
-    version: "1.3.15"
+    version: "2.2.3"
     secret_key: 00000000-0000-0000-0000-000000000000
     template_id: 00000000-0000-0000-0000-000000000000
+```
+
+### OpenTelemetry OpAMP platform
+
+observIQ Agent supports [OpAmp](https://github.com/open-telemetry/opamp-spec) as of version 2.2.3.
+This example assumes an OpAmp compliant server is available on the agent system and port 3001.
+
+playbook.yml
+```yaml
+- name: observiq
+  hosts: all
+  become: yes
+  roles:
+  - role: observiq_cloud_agent
+    version: "2.2.3"
+    secret_key: 00000000-0000-0000-0000-000000000000
+    endpoint: ws://localhost:3001
+    protocol: opamp
+```
+
+### OpenTelemetry OpAMP w/ Mutual TLS
+
+Same as the "OpenTelemetry OpAMP platform" example, except the agent will authenticate
+with the platform using mTLS.
+
+playbook.yml
+```yaml
+- name: observiq
+  hosts: all
+  become: yes
+  roles:
+  - role: observiq_cloud_agent
+    version: "2.2.3"
+    secret_key: 00000000-0000-0000-0000-000000000000
+    endpoint: wss://localhost:3001
+    protocol: opamp
+    cacert: /opt/tls/ca.crt
+    tlscert: /opt/tls/agent.crt
+    tlskey: /opt/tls/agent.key
 ```

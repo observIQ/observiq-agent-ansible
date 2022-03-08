@@ -1,45 +1,18 @@
 ---
-- name: "restart {{ agent_type }} agent"
+- name: "restart observiq-agent agent"
   systemd:
-    name: "{{ service_name }}.service"
+    name: "observiq-agent.service"
     state: restarted
     daemon_reload: true
+    enabled: yes
 
-- name: "restart windows {{ agent_type }} agent"
-  win_shell: "Restart-Service -Name {{ service_name }} -Force"
-  when: package_state == 'present' and not ansible_check_mode
-
-# remote.yaml is dynamically configured by observIQ cloud, so we only
-# update it when there is a change to remote.json, which contains user
-# configured options. If the user does not set an agent_id, updates to
+# manager.yaml is dynamically configured by remote platforms when not in headless
+# mode, so we only update it when there is a change to manager.json, which contains 
+# user configured options. If the user does not set an agent_id, updates to
 # this file will cause a new agent to appear in observIQ cloud.
-- name: "create config/remote.yaml"
+- name: "create config/manager.yaml"
   template:
-    src: "remote.yaml"
-    dest: "{{ install_dir }}/config/remote.yaml"
-    mode: 0600
-  notify: "restart {{ agent_type }} agent"
-
-# When manager is changed, we want to replace the plugins with the matching version
-- name: "install plugins"
-  file:
-    path: "{{ install_dir }}/log_agent/plugins"
-    state: absent
-  notify: "download and install plugins"
-- name: "download and install plugins"
-  ansible.builtin.unarchive:
-    src: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/stanza-plugins.tar.gz"
-    dest: "{{ install_dir }}/log_agent"
-    remote_src: true
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-  notify:
-    - "restart {{ agent_type }} agent"
-    - "chown plugins"
-- name: "chown plugins"
-  ansible.builtin.file:
-    path: "{{ install_dir }}/log_agent/plugins"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    state: directory
-    recurse: yes
+    src: "manager.yaml"
+    dest: "{{ install_dir }}/config/manager.yaml"
+    mode: 0640
+  notify: "restart observiq-agent agent"

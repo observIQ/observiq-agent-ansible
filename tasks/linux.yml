@@ -1,97 +1,72 @@
 ---
-- name: Create install directory tree
-  file:
-    # item is the loop value
-    path: "{{ install_dir }}/{{ item }}"
-    state: directory
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: 0775
-    # when recurse is enabled, config file mode will be set to 0775
-    # which is a security risk
-    recurse: false
-  loop:
-    - 'config'
-    - 'launcher'
-    - 'log'
-    - 'log_agent'
-    - 'manager'
-    - 'manager/current'
-    - 'manager/previous'
-    - 'manager/previous/current'
+- name: Install from amd64 rpm package
+  yum:
+    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-amd64.rpm
+    state: present
+    disable_gpg_check: true
+  when: 
+  - ansible_os_family == "RedHat"
+  - ansible_architecture == "x86_64"
+  notify: "restart observiq-agent agent"
 
-- name: Create service file
-  template:
-    src: "observiq-agent.service"
-    dest: "/etc/systemd/system/{{ service_name }}.service"
-    mode: 0644
+- name: Install from arm64 rpm package
+  yum:
+    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-arm64.rpm
+    state: present
+    disable_gpg_check: true
+  when:
+  - ansible_os_family == "Suse"
+  - ansible_architecture == "aarch64" or ansible_architecture == "arm64"
+  notify: "restart observiq-agent agent"
 
-- name: Register manager
-  stat:
-    path: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64"
-  register: manager
-  changed_when: false
+- name: Install from amd64 rpm package
+  zypper:
+    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-amd64.rpm
+    state: present
+    disable_gpg_check: true
+  when: 
+  - ansible_os_family == "Suse"
+  - ansible_architecture == "x86_64"
+  notify: "restart observiq-agent agent"
 
-- name: Check manager version
-  command: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64 --version"
-  when: manager.stat.exists
-  register: manager_version
-  changed_when: false
+- name: Install from arm64 rpm package
+  zypper:
+    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-arm64.rpm
+    state: present
+    disable_gpg_check: true
+  when:
+  - ansible_os_family == "Suse"
+  - ansible_architecture == "aarch64" or ansible_architecture == "arm64"
+  notify: "restart observiq-agent agent"
 
-- name: Install agent manager
-  get_url:
-    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-manager-linux-amd64"
-    dest: "{{ install_dir }}/manager/current/bpagent-manager-linux-amd64"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: 0755
-  notify:
-    - "restart {{ agent_type }} agent"
-    - "install plugins"
-  when: ( not manager.stat.exists )
-    or ( version != manager_version.stdout)
+- name: Install from amd64 deb package
+  apt:
+    deb: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-amd64.deb
+    state: present
+  when: 
+  - ansible_os_family == 'Debian'
+  - ansible_architecture == "x86_64"
+  notify: "restart observiq-agent agent"
 
-- name: "Install agent launcher"
-  get_url:
-    url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/bpagent-launcher-linux-amd64"
-    dest: "{{ install_dir }}/launcher/bpagent-launcher-linux-amd64"
-    owner: "{{ service_user }}"
-    group: "{{ service_user }}"
-    mode: 0755
-  notify: "restart {{ agent_type }} agent"
-
-- name: "Register plugins"
-  stat:
-    path: "{{ install_dir }}/log_agent/plugins"
-  register: plugin_dir
-
-- name: "Install plugins"
-  command: "echo 'installing plugins'"
-  when: not plugin_dir.stat.exists
-  notify:
-    - "restart {{ agent_type }} agent"
-    - "download and install plugins"
+- name: Install from arm64 deb package
+  apt:
+    deb: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-arm64.deb
+    state: present
+  when: 
+  - ansible_os_family == 'Debian'
+  - ansible_architecture == "aarch64" or ansible_architecture == "arm64"
+  notify: "restart observiq-agent agent"
 
 # Store configuration options as a json file, changes to
-# this file will trigger an update to remote.yaml
-- name: Create config/remote.json
+# this file will trigger an update to manager.yaml. If no
+# changes are made, manager.yaml will not be changed. This
+# allows a remote platform to modify manager.yaml without
+# risk of Ansible reverting the changes.
+- name: Create config/manager.json
   template:
-    src: "remote.json"
-    dest: "{{ install_dir }}/config/remote.json"
-    mode: 0600
+    src: "manager.json"
+    dest: "{{ install_dir }}/config/manager.json"
+    mode: 0640
   register: remote_json
-  notify: "create config/remote.yaml"
+  notify: "create config/manager.yaml"
 
-- name: Create config/logging.yaml
-  template:
-    src: "logging.yaml"
-    dest: "{{ install_dir }}/config/logging.yaml"
-    mode: 0600
-  notify: "restart {{ agent_type }} agent"
-
-- name: Create config/os.yaml
-  template:
-    src: "os.yaml"
-    dest: "{{ install_dir }}/config/os.yaml"
-    mode: 0600
-  notify: "restart {{ agent_type }} agent"

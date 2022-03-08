@@ -1,10 +1,19 @@
 ---
-install_dir: /opt/observiq-agent
-service_user: root
-service_name: observiq-agent
-websocket_connection_endpoint: 'wss://connections.app.observiq.com'
+# Official packages will install to /opt/observiq-agent, do not
+# change this variable.
+install_dir: '/opt/observiq-agent'
 
-# required variables that can be empty
+# Config options
+#
+# Required values with defaults
+headless: true
+websocket_connection_endpoint: 'wss://connections.app.observiq.com'
+# Variables that can be empty
+secret_key: ""
 agent_id: ""
-agent_name: ""
 template_id: ""
+protocol: ""
+labels: ""
+tlscert: ""
+tlskey: ""
+cacert: ""

@@ -1,3 +1,2 @@
 ---
-agent_type: 'observiq-agent'
 package_state: 'present'

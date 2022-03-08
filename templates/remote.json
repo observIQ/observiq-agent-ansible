@@ -1,7 +1,0 @@
-{
-    "secret_key": "{{ secret_key }}",
-    "endpoint": "{{ websocket_connection_endpoint }}",
-    "agent_id": "{{ agent_id }}",
-    "agent_name": "{{ agent_name }}",
-    "template_id": "{{ template_id }}"
-}

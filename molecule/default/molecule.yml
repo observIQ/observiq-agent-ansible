@@ -21,7 +21,7 @@ platforms:
       - linux
       - centos
   - name: "centos-8-${MOLECULE_SCENARIO_NAME}"
-    image_family: projects/centos-cloud/global/images/family/centos-8
+    image_family: projects/rocky-linux-cloud/global/images/family/rocky-linux-8
     machine_type: e2-small
     size_gb: 40
     groups:
@@ -41,13 +41,6 @@ platforms:
     groups:
       - linux
       - rhel
-  - name: "ubuntu-1604-${MOLECULE_SCENARIO_NAME}"
-    image_family: projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts
-    machine_type: e2-small
-    size_gb: 40
-    groups:
-      - linux
-      - ubuntu
   - name: "ubuntu-1804-${MOLECULE_SCENARIO_NAME}"
     image_family: projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
     machine_type: e2-small
@@ -90,20 +83,6 @@ platforms:
     groups:
       - linux
       - sles
-  #- name: "windows-2016-${MOLECULE_SCENARIO_NAME}"
-  #  image_family: projects/windows-cloud/global/images/family/windows-2016
-  #  machine_type: e2-small
-  #  size_gb: 80
-  #  groups:
-  #    - windows
-  #    - windows-2016
-  #- name: "windows-2019-${MOLECULE_SCENARIO_NAME}"
-  #  image_family: projects/windows-cloud/global/images/family/windows-2019
-  #  machine_type: e2-small
-  #  size_gb: 80
-  #  groups:
-  #    - windows
-  #    - windows-2019
 scenario:
   test_sequence:
     - destroy
@@ -119,14 +98,6 @@ provisioner:
     group_vars:
       linux:
         ansible_ssh_private_key_file: ${SSH_KEY_FILE}
-      # windows is not implemented but may be supported in the future
-      #windows:
-      #  ansible_become: false
-      #  ansible_winrm_server_cert_validation: ignore
-      #windows-2016:
-      #  ansible_password: '"${WIN_2016_PW}"'
-      #windows-2019:
-      #  ansible_password: '"${WIN_2019_PW}"'
   playbooks:
     create: ../resources/playbooks/create.yml
     converge: ../resources/playbooks/converge.yml
