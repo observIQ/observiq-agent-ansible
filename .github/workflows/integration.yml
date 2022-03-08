@@ -80,10 +80,6 @@ jobs:
           ansible-galaxy collection install google.cloud
           ansible-galaxy collection install community.crypto
 
-      - name: Get short git hash
-        id: sha-hash
-        run: echo "::set-output name=hash::$(git rev-parse --short HEAD)"
-
       - name: Converge.
         run: make converge
         env:
@@ -91,7 +87,6 @@ jobs:
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
-          SHA_HASH: ${{ steps.sha-hash.outputs.hash }}"
 
       - name: Check Idempotence.
         run: make idempotence
@@ -100,7 +95,6 @@ jobs:
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
-          SHA_HASH: ${{ steps.sha-hash.outputs.hash }}"
 
       - name: Verify.
         run: make verify
@@ -109,7 +103,6 @@ jobs:
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
-          SHA_HASH: ${{ steps.sha-hash.outputs.hash }}"
 
       - name: Cleanup test instances
         run: make clean
@@ -118,5 +111,4 @@ jobs:
           OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
           SSH_KEY_FILE: id_rsa
           SSH_USER: ${{secrets.SSH_USER}}
-          SHA_HASH: ${{ steps.sha-hash.outputs.hash }}"
         if: ${{ always() }}
