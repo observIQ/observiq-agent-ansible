@@ -28,6 +28,11 @@ jobs:
           default: "3.9.4"
           command: pip install -U pip # upgrade pip after installing python
 
+      - name: Install Galaxy Modules
+        run: |
+          ansible-galaxy collection install google.cloud
+          ansible-galaxy collection install community.crypto
+
       - name: Install Gcloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
