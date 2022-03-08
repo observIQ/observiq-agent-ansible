@@ -69,13 +69,6 @@ platforms:
     groups:
       - linux
       - debian
-  - name: "sles-12-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
-    image_family: projects/suse-cloud/global/images/family/sles-12
-    machine_type: e2-small
-    size_gb: 40
-    groups:
-      - linux
-      - sles
   - name: "sles-15-${MOLECULE_SCENARIO_NAME}${GIT_SHA}"
     image_family: projects/suse-cloud/global/images/family/sles-15
     machine_type: e2-small
