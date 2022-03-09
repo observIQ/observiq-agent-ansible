@@ -17,3 +17,7 @@ labels: ""
 tlscert: ""
 tlskey: ""
 cacert: ""
+
+package_type: "{{ 'rpm' if ansible_os_family in ['RedHat', 'Suse'] else 'deb' }}"
+arch: "{{ 'arm64' if ansible_architecture in ['arm64', 'aarch64'] else 'amd64' }}"
+package_url: "https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-{{ arch }}.{{ package_type }}"
