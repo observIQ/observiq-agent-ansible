@@ -104,5 +104,4 @@ jobs:
 
       - name: Cleanup test instances.
         run: molecule destroy -s ${{ matrix.scenario }}
-        env:
         if: ${{ always() }}
