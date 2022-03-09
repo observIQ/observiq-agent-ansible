@@ -64,7 +64,7 @@
 # risk of Ansible reverting the changes.
 - name: Create config/manager.json
   template:
-    src: "manager.json"
+    src: "manager.json.tmpl"
     dest: "{{ install_dir }}/config/manager.json"
     mode: 0640
   register: remote_json
