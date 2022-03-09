@@ -1,3 +1,4 @@
+*.json
 .env
 gcp_sa_key.json
 ssh-key-ansible-sa

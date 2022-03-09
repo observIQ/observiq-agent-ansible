@@ -1,60 +1,28 @@
 ---
-- name: Install from amd64 rpm package
+- name: Install from rpm package
   yum:
-    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-amd64.rpm
+    name: "{{ package_url }}"
     state: present
     disable_gpg_check: true
   when: 
   - ansible_os_family == "RedHat"
-  - ansible_architecture == "x86_64"
-  notify: "restart observiq-agent agent"
-
-- name: Install from arm64 rpm package
-  yum:
-    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-arm64.rpm
-    state: present
-    disable_gpg_check: true
-  when:
-  - ansible_os_family == "Suse"
-  - ansible_architecture == "aarch64" or ansible_architecture == "arm64"
   notify: "restart observiq-agent agent"
 
 - name: Install from amd64 rpm package
   zypper:
-    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-amd64.rpm
+    name: "{{ package_url }}"
     state: present
     disable_gpg_check: true
   when: 
   - ansible_os_family == "Suse"
-  - ansible_architecture == "x86_64"
-  notify: "restart observiq-agent agent"
-
-- name: Install from arm64 rpm package
-  zypper:
-    name: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-arm64.rpm
-    state: present
-    disable_gpg_check: true
-  when:
-  - ansible_os_family == "Suse"
-  - ansible_architecture == "aarch64" or ansible_architecture == "arm64"
   notify: "restart observiq-agent agent"
 
 - name: Install from amd64 deb package
   apt:
-    deb: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-amd64.deb
+    deb: "{{ package_url }}"
     state: present
   when: 
   - ansible_os_family == 'Debian'
-  - ansible_architecture == "x86_64"
-  notify: "restart observiq-agent agent"
-
-- name: Install from arm64 deb package
-  apt:
-    deb: https://storage.googleapis.com/observiq-cloud/observiq-agent/{{ version }}/artifacts/observiq-agent-{{ version }}-linux-arm64.deb
-    state: present
-  when: 
-  - ansible_os_family == 'Debian'
-  - ansible_architecture == "aarch64" or ansible_architecture == "arm64"
   notify: "restart observiq-agent agent"
 
 # Store configuration options as a json file, changes to
@@ -64,7 +32,7 @@
 # risk of Ansible reverting the changes.
 - name: Create config/manager.json
   template:
-    src: "manager.json"
+    src: "manager.json.tmpl"
     dest: "{{ install_dir }}/config/manager.json"
     mode: 0640
   register: remote_json

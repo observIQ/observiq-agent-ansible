@@ -3,31 +3,31 @@
 headless: {{ headless }}
 
 # platform secret key
-secret_key: {{ secret_key }}
+secret_key: "{{ secret_key }}"
 
 # platform endpoint
-endpoint: {{ websocket_connection_endpoint }}
+endpoint: "{{ endpoint }}"
 
 # agent uuid
-agent_id: {{ agent_id }}
+agent_id: "{{ agent_id }}"
 
 # template id for platforms that accept them
-template_id: {{ template_id }}
+template_id: "{{ template_id }}"
 
 # protocol: platforms protocol
-protocol: {{ protocol }}
+protocol: "{{ protocol }}"
 
 # labels for platforms that accept them
-labels: {{ labels }}
+labels: "{{ labels }}"
 
 # TLS configuration
 #
 # x509 PEM certificate file path
-tlscert: {{ tlscert }}
+tlscert: "{{ tlscert }}"
 
 # x509 PEM private key file path
-tlskey: {{ tlskey }}
+tlskey: "{{ tlskey }}"
 
 # x509 PEM certificate authority file path
-cacert: {{ cacert }}
+cacert: "{{ cacert }}"
 

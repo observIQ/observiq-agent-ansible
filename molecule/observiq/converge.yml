@@ -6,8 +6,9 @@
       include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
+        headless: false
         version: "2.2.3"
-        # TODO: actually deploy an opamp platform
-        protocol: opamp
+        protocol: observiq
         endpoint: http://localhost:3001
         secret_key:  "{{ lookup('env', 'OIQ_SECRET_KEY') }}"
+        labels: "purpose=test,deployedby=ansible"

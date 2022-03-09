@@ -14,6 +14,13 @@ on:
       - 'README.md'
       - '.gitignore'
       - 'LICENSE'
+
+env:
+  GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
+  OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
+  SSH_KEY_FILE: id_rsa
+  SSH_USER: ${{secrets.SSH_USER}}
+
 jobs:
   integration:
     name: Molecule
@@ -86,40 +93,16 @@ jobs:
           molecule syntax -s ${{ matrix.scenario }}
           molecule lint -s ${{ matrix.scenario }}
 
-      - name: Install Galaxy Modules
-        run: |
-          ansible-galaxy collection install google.cloud
-          ansible-galaxy collection install community.crypto
-
       - name: Converge.
         run: molecule converge -s ${{ matrix.scenario }}
-        env:
-          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
-          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: id_rsa
-          SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Check Idempotence.
         run: molecule idempotence -s ${{ matrix.scenario }}
-        env:
-          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
-          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: id_rsa
-          SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Verify.
         run: molecule verify -s ${{ matrix.scenario }}
-        env:
-          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
-          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: id_rsa
-          SSH_USER: ${{secrets.SSH_USER}}
 
       - name: Cleanup test instances.
         run: molecule destroy -s ${{ matrix.scenario }}
         env:
-          GCP_PROJECT_ID: ${{secrets.GCP_PROJECT_ID}}
-          OIQ_SECRET_KEY: ${{secrets.OIQ_SECRET_KEY}}
-          SSH_KEY_FILE: id_rsa
-          SSH_USER: ${{secrets.SSH_USER}}
         if: ${{ always() }}
