@@ -4,4 +4,4 @@ molecule[ansible] == 3.6.1
 apache-libcloud == 3.4.1
 pycrypto == 2.6.1
 molecule-gce
-google-auth == 2.6.0
+google-auth == 2.6.2
